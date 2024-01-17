@@ -2,34 +2,43 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Homepage(),
+      home: BuchenFenster(dienstnehmer: '',),
     );
   }
 }
 
-class Homepage extends StatefulWidget {
-  const Homepage({Key? key}) : super(key: key);
+class BuchenFenster extends StatefulWidget {
+  final String dienstnehmer;
+
+  const BuchenFenster({Key? key, required this.dienstnehmer}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<Homepage> {
+class _HomePageState extends State<BuchenFenster> {
   List<String> dropdownItems = ['Normale Buchung', 'Dienstgang', 'Homeoffice'];
   String selectedDropdownItem = 'Normale Buchung';
   bool isChecked = false;
   late Timer _timer;
   late String _formatted;
+
+  int ABW_NR = 0;
+  int ABW_BEZEICHNUNG = 0;
+  int BU_ID = 0;
+  //final DateTime BU_TIMESTAMP;
+  int BU_DN_ID = 0;
+  int BU_ABW_NR = 0;
 
   @override
   void initState() {
@@ -42,13 +51,6 @@ class _HomePageState extends State<Homepage> {
         _formatted = DateFormat('HH:mm').format(DateTime.now());
       });
     });
-  }
-
-  @override
-  void dispose() {
-    // Cancel the timer to prevent memory leaks
-    _timer.cancel();
-    super.dispose();
   }
 
   @override
@@ -70,6 +72,14 @@ class _HomePageState extends State<Homepage> {
               fit: BoxFit.cover,
             ),
           ),
+          // Label above the clock
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              '${widget.dienstnehmer}',
+              style: TextStyle(fontSize: 20.0, color: Colors.grey),
+            ),
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -80,7 +90,7 @@ class _HomePageState extends State<Homepage> {
                   Text(
                     _formatted,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 50.00, color: Color(0xFF443B5A), fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 50.0, color: Color(0xFF443B5A), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 20.0),
                   Row(
