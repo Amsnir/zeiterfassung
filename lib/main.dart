@@ -9,8 +9,7 @@ import 'package:zeiterfassung_v1/hivedb_Klassen/synch.dart';
 import 'package:zeiterfassung_v1/dashboard.dart';
 
 void main() async{
-  await Hive.initFlutter();
-  // await Hive.openBox('myBox');
+  await Hive.initFlutter('hivedb');
   await Hive.openBox<Dienstnehmer>('dienstnehmer');
   await Hive.openBox<Buchungen>('buchungen');
   await Hive.openBox<Abwesenheiten>('abwesenheiten');

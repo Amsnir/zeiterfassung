@@ -58,7 +58,7 @@ class _HomePageState extends State<BuchenFenster> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
+         /* Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
@@ -71,7 +71,7 @@ class _HomePageState extends State<BuchenFenster> {
               height: 200.0,
               fit: BoxFit.cover,
             ),
-          ),
+          ),*/
           // Label above the clock
           Padding(
             padding: const EdgeInsets.all(20.0),
