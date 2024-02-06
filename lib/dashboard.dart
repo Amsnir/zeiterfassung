@@ -66,7 +66,7 @@ class _HomePageState extends State<BuchenFenster> {
     return Scaffold(
       body: Column(
         children: [
-          /* Container(
+          Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
@@ -74,12 +74,12 @@ class _HomePageState extends State<BuchenFenster> {
               ),
             ),
             child: Image.asset(
-              'assets/LHR_Logo_orange-blau_RGB_transparent_Latzer.png',
+              'lib/images/LHR.png',
               width: 300.0,
               height: 200.0,
               fit: BoxFit.cover,
             ),
-          ),*/
+          ),
           // Label above the clock
           Padding(
             padding: const EdgeInsets.all(20.0),
