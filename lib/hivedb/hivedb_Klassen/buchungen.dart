@@ -15,5 +15,10 @@ class Buchungen extends HiveObject {
 
   @HiveField(3)
   late int BU_ABW_NR;
-  
+
+  Buchungen(
+      {required this.BU_ID,
+      required this.BU_DN_ID,
+      required this.BU_TIMESTAMP,
+      required this.BU_ABW_NR});
 }

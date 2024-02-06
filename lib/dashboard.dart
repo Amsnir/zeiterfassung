@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:zeiterfassung_v1/buchen.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/dienstnehmer.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,16 +13,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: BuchenFenster(dienstnehmer: ''),
+    return MaterialApp(
+      home: BuchenFenster(
+        dienstnehmer: Dienstnehmer(),
+      ),
     );
   }
 }
 
 class BuchenFenster extends StatefulWidget {
-  final String dienstnehmer;
+  final Dienstnehmer dienstnehmer;
 
-  const BuchenFenster({Key? key, required this.dienstnehmer}) : super(key: key);
+  BuchenFenster({Key? key, required this.dienstnehmer}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -52,12 +56,16 @@ class _HomePageState extends State<BuchenFenster> {
     });
   }
 
+  void buchenWithDienstnehmer() {
+    buchen(widget.dienstnehmer);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-         /* Container(
+          /* Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
@@ -74,16 +82,9 @@ class _HomePageState extends State<BuchenFenster> {
           // Label above the clock
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Container(
-              padding: const EdgeInsets.all(12.0), // Adjust padding as needed
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.grey[300],
-              ),
-              child: Text(
-                '${widget.dienstnehmer}',
-                style: TextStyle(fontSize: 20.0, color: Colors.grey),
-              ),
+            child: Text(
+              widget.dienstnehmer.DN_NAME.toString(),
+              style: const TextStyle(fontSize: 20.0, color: Colors.grey),
             ),
           ),
           Expanded(
@@ -92,13 +93,16 @@ class _HomePageState extends State<BuchenFenster> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   Text(
                     _formatted,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 50.0, color: Color(0xFF443B5A), fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 50.0,
+                        color: Color(0xFF443B5A),
+                        fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -113,11 +117,12 @@ class _HomePageState extends State<BuchenFenster> {
                       const SizedBox(width: 8.0),
                       const Text(
                         'Buchungsende',
-                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   if (isChecked == false)
                     Center(
                       child: Container(
@@ -133,7 +138,7 @@ class _HomePageState extends State<BuchenFenster> {
                             });
                           },
                           items: dropdownItems.map<DropdownMenuItem<String>>(
-                                (String value) {
+                            (String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Container(
@@ -155,15 +160,13 @@ class _HomePageState extends State<BuchenFenster> {
                     ),
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: () {
-                      // Implement booking logic here
-                    },
+                    onPressed: buchenWithDienstnehmer,
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(200, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      primary: Color(0xFF443B5A),
+                      backgroundColor: const Color(0xFF443B5A),
                     ),
                     child: const Text(
                       'Buchen',
