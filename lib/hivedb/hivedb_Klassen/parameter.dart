@@ -6,19 +6,19 @@ part 'parameter.g.dart';
 @HiveType(typeId: 3)
 class Parameter extends HiveObject {
   @HiveField(0)
-  late Char PAR_API_URL;
+  late String PAR_API_URL;
 
   @HiveField(1)
-  late Char PAR_LOGONNAME;
+  late String PAR_LOGONNAME;
 
   @HiveField(2)
-  late Char PAR_PASSWORT;
+  late String PAR_PASSWORT;
 
   @HiveField(3)
-  late Char PAR_MAIL;
+  late String PAR_MAIL;
 
   @HiveField(4)
-  late Char PAR_SECRET;
+  late String PAR_SECRET;
 
   @HiveField(5)
   late int PAR_TAGE_BEARB;

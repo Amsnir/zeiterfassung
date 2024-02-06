@@ -18,11 +18,11 @@ class DienstnehmerAdapter extends TypeAdapter<Dienstnehmer> {
     };
     return Dienstnehmer()
       ..DN_ID = fields[0] as int
-      ..DN_FA_KZ = fields[1] as Char
+      ..DN_FA_KZ = fields[1] as String
       ..DN_FA_NR = fields[2] as int
       ..DN_NR = fields[3] as int
-      ..DN_NAME = fields[4] as Char
-      ..DN_VORNAME = fields[5] as Char
+      ..DN_NAME = fields[4] as String
+      ..DN_VORNAME = fields[5] as String
       ..DN_STATUS = fields[6] as int;
   }
 

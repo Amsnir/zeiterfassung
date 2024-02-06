@@ -16,12 +16,12 @@ class BuchungenAdapter extends TypeAdapter<Buchungen> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Buchungen()
-      ..BU_ID = fields[0] as int
-      ..BU_DN_ID = fields[1] as int
-      ..BU_TIMESTAMP = fields[2] as DateTime
-      ..BU_ABW_NR = fields[3] as int
-      ;
+    return Buchungen(
+      BU_ID: fields[0] as int,
+      BU_DN_ID: fields[1] as int,
+      BU_TIMESTAMP: fields[2] as DateTime,
+      BU_ABW_NR: fields[3] as int,
+    );
   }
 
   @override

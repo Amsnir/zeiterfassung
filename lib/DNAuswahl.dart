@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zeiterfassung_v1/dashboard.dart';
+import 'package:zeiterfassung_v1/dynamicbuttonswidget.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,21 +24,6 @@ class DNAuswahlPage extends StatefulWidget {
 }
 
 class _HomePageState extends State<DNAuswahlPage> {
-  String dienstnehmer = "";
-
-  String getDienstnehmer() {
-    return dienstnehmer;
-  }
-
-  void navigateToBuchenFenster() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BuchenFenster(dienstnehmer: dienstnehmer),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +49,7 @@ class _HomePageState extends State<DNAuswahlPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   const Text(
                     'Dienstnehmerauswahl',
                     textAlign: TextAlign.center,
@@ -74,60 +59,8 @@ class _HomePageState extends State<DNAuswahlPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      dienstnehmer = "Dienstnehmer 1";
-                      navigateToBuchenFenster();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      primary: Colors.grey,
-                    ),
-                    child: Text(
-                      'Dienstnehmer 1',
-                      style: TextStyle(fontSize: 20.0, color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      dienstnehmer = "Dienstnehmer 2";
-                      navigateToBuchenFenster();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      primary: Colors.grey,
-                    ),
-                    child: const Text(
-                      'Dienstnehmer 2',
-                      style: TextStyle(fontSize: 20.0, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      dienstnehmer = "Dienstnehmer 3";
-                      navigateToBuchenFenster();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      primary: Colors.grey,
-                    ),
-                    child: Text(
-                      'Dienstnehmer 3',
-                      style: TextStyle(fontSize: 20.0, color: Colors.white),
-                    ),
-                  ),
+                  const SizedBox(height: 20.0),
+                  DynamicButtonsWidget(),
                 ],
               ),
             ),

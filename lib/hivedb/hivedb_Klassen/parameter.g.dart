@@ -17,11 +17,11 @@ class ParameterAdapter extends TypeAdapter<Parameter> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Parameter()
-      ..PAR_API_URL = fields[0] as Char
-      ..PAR_LOGONNAME = fields[1] as Char
-      ..PAR_PASSWORT = fields[2] as Char
-      ..PAR_MAIL = fields[3] as Char
-      ..PAR_SECRET = fields[4] as Char
+      ..PAR_API_URL = fields[0] as String
+      ..PAR_LOGONNAME = fields[1] as String
+      ..PAR_PASSWORT = fields[2] as String
+      ..PAR_MAIL = fields[3] as String
+      ..PAR_SECRET = fields[4] as String
       ..PAR_TAGE_BEARB = fields[5] as int;
   }
 

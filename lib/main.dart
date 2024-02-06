@@ -1,26 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/DNAuswahl.dart';
-import 'package:zeiterfassung_v1/hivedb_Klassen/abwesenheiten.dart';
-import 'package:zeiterfassung_v1/hivedb_Klassen/buchungen.dart';
-import 'package:zeiterfassung_v1/hivedb_Klassen/dienstnehmer.dart';
-import 'package:zeiterfassung_v1/hivedb_Klassen/parameter.dart';
-import 'package:zeiterfassung_v1/hivedb_Klassen/synch.dart';
-import 'package:zeiterfassung_v1/dashboard.dart';
+import 'package:zeiterfassung_v1/api/synchdb.dart';
+import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 
-void main() async{
-  await Hive.initFlutter('hivedb');
-  await Hive.openBox<Dienstnehmer>('dienstnehmer');
-  await Hive.openBox<Buchungen>('buchungen');
-  await Hive.openBox<Abwesenheiten>('abwesenheiten');
-  await Hive.openBox<Parameter>('parameter');
-  await Hive.openBox<Synch>('synch');
+void main() async {
+  await HiveFactory.initHive();
+  await HiveFactory.registerAdapter();
 
-  Hive.registerAdapter(DienstnehmerAdapter());
-  Hive.registerAdapter(BuchungenAdapter());
-  Hive.registerAdapter(AbwesenheitenAdapter());
-  Hive.registerAdapter(ParameterAdapter());
-  Hive.registerAdapter(SynchAdapter());
+  synchData();
 
   runApp(const MainApp());
 }
@@ -31,8 +19,6 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: DNAuswahlPage()
-    );
+        debugShowCheckedModeBanner: false, home: DNAuswahlPage());
   }
 }
