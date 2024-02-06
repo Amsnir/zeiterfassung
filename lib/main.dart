@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:zeiterfassung_v1/DNAuswahl.dart';
+//import 'package:hive_flutter/hive_flutter.dart';
+//import 'package:zeiterfassung_v1/DNAuswahl.dart';
 import 'package:zeiterfassung_v1/api/synchdb.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
+import 'package:zeiterfassung_v1/login/pages/login_page.dart';
 
 void main() async {
   await HiveFactory.initHive();
@@ -18,7 +19,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: DNAuswahlPage());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginPage(),
+    );
+      
   }
 }
