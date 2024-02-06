@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: BuchenFenster(dienstnehmer: '',),
+      home: BuchenFenster(dienstnehmer: ''),
     );
   }
 }
@@ -36,7 +36,6 @@ class _HomePageState extends State<BuchenFenster> {
   int ABW_NR = 0;
   int ABW_BEZEICHNUNG = 0;
   int BU_ID = 0;
-  //final DateTime BU_TIMESTAMP;
   int BU_DN_ID = 0;
   int BU_ABW_NR = 0;
 
@@ -75,9 +74,16 @@ class _HomePageState extends State<BuchenFenster> {
           // Label above the clock
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Text(
-              '${widget.dienstnehmer}',
-              style: TextStyle(fontSize: 20.0, color: Colors.grey),
+            child: Container(
+              padding: const EdgeInsets.all(12.0), // Adjust padding as needed
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.grey[300],
+              ),
+              child: Text(
+                '${widget.dienstnehmer}',
+                style: TextStyle(fontSize: 20.0, color: Colors.grey),
+              ),
             ),
           ),
           Expanded(
@@ -105,7 +111,7 @@ class _HomePageState extends State<BuchenFenster> {
                         },
                       ),
                       const SizedBox(width: 8.0),
-                      Text(
+                      const Text(
                         'Buchungsende',
                         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                       ),
@@ -147,7 +153,7 @@ class _HomePageState extends State<BuchenFenster> {
                         ),
                       ),
                     ),
-                  Spacer(),
+                  const Spacer(),
                   ElevatedButton(
                     onPressed: () {
                       // Implement booking logic here
@@ -159,7 +165,7 @@ class _HomePageState extends State<BuchenFenster> {
                       ),
                       primary: Color(0xFF443B5A),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Buchen',
                       style: TextStyle(fontSize: 20.0, color: Colors.white),
                     ),

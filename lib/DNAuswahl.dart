@@ -12,7 +12,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: DNAuswahlPage(),
-      //test test
     );
   }
 }
@@ -67,7 +66,7 @@ class _HomePageState extends State<DNAuswahlPage> {
                 children: [
                   SizedBox(height: 20.0),
                   const Text(
-                    'Dienstnehmerauswahl',
+                    'DIENSTNEHMER AUSWAHL',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 30.0,
@@ -75,28 +74,10 @@ class _HomePageState extends State<DNAuswahlPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
-                      dienstnehmer = "Dienstnehmer 1";
-                      navigateToBuchenFenster();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      primary: Colors.grey,
-                    ),
-                    child: Text(
-                      'Dienstnehmer 1',
-                      style: TextStyle(fontSize: 20.0, color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      dienstnehmer = "Dienstnehmer 2";
+                      dienstnehmer = "Lukei Spugei";
                       navigateToBuchenFenster();
                     },
                     style: ElevatedButton.styleFrom(
@@ -107,14 +88,14 @@ class _HomePageState extends State<DNAuswahlPage> {
                       primary: Colors.grey,
                     ),
                     child: const Text(
-                      'Dienstnehmer 2',
+                      'Lukei Spugei',
                       style: TextStyle(fontSize: 20.0, color: Colors.white),
                     ),
                   ),
                   const SizedBox(height: 10.0),
                   ElevatedButton(
                     onPressed: () {
-                      dienstnehmer = "Dienstnehmer 3";
+                      dienstnehmer = "Vitus Emberger";
                       navigateToBuchenFenster();
                     },
                     style: ElevatedButton.styleFrom(
@@ -124,8 +105,26 @@ class _HomePageState extends State<DNAuswahlPage> {
                       ),
                       primary: Colors.grey,
                     ),
-                    child: Text(
-                      'Dienstnehmer 3',
+                    child: const Text(
+                      'Vitus Emberger',
+                      style: TextStyle(fontSize: 20.0, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      dienstnehmer = "Florian Kössler";
+                      navigateToBuchenFenster();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(200, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      primary: Colors.grey,
+                    ),
+                    child: const Text(
+                      "Florian Kössler",
                       style: TextStyle(fontSize: 20.0, color: Colors.white),
                     ),
                   ),
