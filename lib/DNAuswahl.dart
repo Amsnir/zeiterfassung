@@ -44,7 +44,7 @@ class _HomePageState extends State<DNAuswahlPage> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
+          /*Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20.0),
@@ -57,7 +57,7 @@ class _HomePageState extends State<DNAuswahlPage> {
               height: 200.0,
               fit: BoxFit.cover,
             ),
-          ),
+          ),*/
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
