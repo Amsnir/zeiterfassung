@@ -38,6 +38,12 @@ class _LoginPageState extends State<LoginPage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('cookie', cookie!);
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  '$cookie')),
+        );
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
               builder: (context) =>
@@ -105,10 +111,9 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 25),
                   MyButton(
                     onTap:
-                        signUserIn, // Make sure your MyButton supports the onTap parameter
-                    // Additional button styling and parameters
+                        signUserIn, 
                   ),
-                  // Include other widgets as needed
+                
                 ],
               ),
             ),
