@@ -11,15 +11,15 @@ class DynamicButtonsWidget extends StatefulWidget {
 }
 
 class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
-  late Box<Dienstnehmer>? dienstnehmerBox;
+  late List<Dienstnehmer>? dienstnehmerList;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: HiveFactory.openBox<Dienstnehmer>('dienstnehmer'),
+      future: HiveFactory.listBox<Dienstnehmer>('dienstnehmer'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          dienstnehmerBox = snapshot.data;
+          dienstnehmerList = snapshot.data;
           return _buildButtons();
         } else {
           return CircularProgressIndicator();
@@ -32,29 +32,23 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
-        dienstnehmerBox!.length,
+        dienstnehmerList!.length,
         (index) {
-          Dienstnehmer? fromDB = dienstnehmerBox!.getAt(index);
-          String buttonLabel = fromDB?.DN_NAME ?? "Unbekannter Dienstnehmer";
-
-          if (index + 1 == dienstnehmerBox!.length) {
-            dienstnehmerBox!.close();
-          }
+          Dienstnehmer? fromDB = dienstnehmerList!.elementAt(index);
+          String buttonLabel = fromDB.DN_NAME;
 
           return Column(
             children: [
               ElevatedButton(
                 onPressed: () {
-                  if (fromDB != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BuchenFenster(
-                          dienstnehmer: fromDB as Dienstnehmer,
-                        ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BuchenFenster(
+                        dienstnehmer: fromDB,
                       ),
-                    );
-                  }
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   fixedSize: const Size(200, 50),

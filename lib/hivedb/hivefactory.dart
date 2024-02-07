@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/abwesenheiten.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/buchungen.dart';
@@ -32,15 +33,23 @@ class HiveFactory {
 
   static Future<Box<T>> openBox<T>(String boxName) async {
     return await Hive.openBox<T>(boxName);
-
-    // await Hive.openBox<Dienstnehmer>('dienstnehmer');
-    // await Hive.openBox<Buchungen>('buchungen');
-    // await Hive.openBox<Abwesenheiten>('abwesenheiten');
-    // await Hive.openBox<Parameter>('parameter');
-    // await Hive.openBox<Synch>('synch');
   }
 
   static Future<void> closeBox(Box b) async {
     await b.close();
+  }
+
+  static Future<List<T>> listBox<T>(String boxName) async {
+    List<T> list = [];
+
+    try {
+      final box = await Hive.openBox<T>(boxName);
+      list.addAll(box.values);
+      await closeBox(box);
+    } catch (e) {
+      print('Error fetching values from box: $e');
+    }
+
+    return list;
   }
 }
