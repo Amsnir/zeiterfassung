@@ -29,6 +29,8 @@ class _HomePageState extends State<DNAuswahlPage> {
     return Scaffold(
       body: Column(
         children: [
+          const SizedBox(height: 75),
+          Image.asset('lib/images/LHR.png'),
           /*Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
