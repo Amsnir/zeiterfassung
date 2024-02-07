@@ -9,9 +9,9 @@ import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 void synchData() async {
   final dienstnehmer = new Dienstnehmer();
 
-  var data2 = await fetchBearerToken();
-  var data = await fetchDienstnehmer();
-  log(data.toString());
+  // var data2 = await fetchBearerToken();
+  // var data = await fetchDienstnehmer();
+//  log(data.toString());
   dienstnehmer.DN_ID = 1;
   dienstnehmer.DN_FA_KZ = 'd';
   dienstnehmer.DN_FA_NR = 1;

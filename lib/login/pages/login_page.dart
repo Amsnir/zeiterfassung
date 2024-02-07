@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zeiterfassung_v1/api/apiHandler.dart';
 import 'package:zeiterfassung_v1/login/components/my_button.dart';
 import 'package:zeiterfassung_v1/login/components/my_textfield.dart';
 import 'package:zeiterfassung_v1/DnAuswahl.dart'; // Adjust the import path as necessary
-import 'package:zeiterfassung_v1/api/ApiHandler.dart'; // Adjust the import path to where your ApiService is located
+// Adjust the import path to where your ApiService is located
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -19,14 +20,13 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isLoading = false;
-  final ApiHandler _apiHandler = ApiHandler();
 
   Future<void> signUserIn() async {
     setState(() {
       _isLoading = true;
     });
 
-    final cookie = await _apiHandler.getCookie(
+    final cookie = await ApiHandler.getCookie(
       serverController.text,
       usernameController.text,
       passwordController.text,

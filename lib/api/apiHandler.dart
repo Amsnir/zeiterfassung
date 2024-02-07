@@ -4,12 +4,15 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 
 class ApiHandler {
-  Future<http.Response> fetchAlbum() {
-    return http.get(Uri.parse(
-        'https://app.lohn.at/Self/api/v1/firmengruppen/GF/firmen/1/dienstnehmer/6669'));
+  static final ApiHandler _instance = ApiHandler._();
+
+  factory ApiHandler() {
+    return _instance;
   }
 
-  Future<String?> getCookie(
+  ApiHandler._();
+
+  static Future<String?> getCookie(
       String serverUrl, String username, String password) async {
     final url = Uri.parse(
         '$serverUrl/Self/login?username=$username&password=$password');
