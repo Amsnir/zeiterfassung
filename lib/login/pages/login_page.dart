@@ -1,14 +1,14 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zeiterfassung_v1/login/components/my_button.dart';
 import 'package:zeiterfassung_v1/login/components/my_textfield.dart';
-
-// Import your HomePage and other custom widgets
-import 'package:zeiterfassung_v1/DnAuswahl.dart';
+import 'package:zeiterfassung_v1/DnAuswahl.dart'; // Adjust the import path as necessary
+import 'package:zeiterfassung_v1/api/ApiHandler.dart'; // Adjust the import path to where your ApiService is located
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -19,55 +19,41 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isLoading = false;
+  final ApiHandler _apiHandler = ApiHandler();
 
   Future<void> signUserIn() async {
     setState(() {
       _isLoading = true;
     });
 
-    final url = Uri.parse(
-        '${serverController.text}/Self/login?username=${usernameController.text}&password=${passwordController.text}');
+    final cookie = await _apiHandler.getCookie(
+      serverController.text,
+      usernameController.text,
+      passwordController.text,
+    );
 
-    try {
-      final response = await http.get(url);
+    if (cookie != null) {
+      // Save the cookie in SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('cookie', cookie);
 
-      // Example condition for successful login, adjust based on your API response
-      if (response.statusCode == 200 &&
-          response.headers['set-cookie'] != null) {
-        final cookie = response.headers['set-cookie'];
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('cookie', cookie!);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  '$cookie')),
-        );
-
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              builder: (context) =>
-                  DNAuswahlPage()), // Adjust this to your HomePage or the next page
-        );
-      } else {
-        // Handle login failure
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'Login failed, please check your credentials and try again.')),
-        );
-      }
-    } catch (e) {
-      // Handle errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $e')),
+      // Navigate to DNAuswahlPage
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => DNAuswahlPage()),
       );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    } else {
+      // Show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Login failed, please check your credentials and try again.')),
+      );
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -77,43 +63,34 @@ class _LoginPageState extends State<LoginPage> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              // Use SingleChildScrollView to avoid overflow when keyboard is visible
               child: Column(
                 children: [
-                  //Logo
                   const SizedBox(height: 75),
-                  Image.asset('lib/images/LHR.png'),
-
-                  //ServerURL
+                  Image.asset(
+                      'lib/images/LHR.png'), // Ensure your image path is correct
                   const SizedBox(height: 10),
                   MyTextField(
                     controller: serverController,
                     hintText: 'Server URL: http://XXX.XXX.X.X:XXX',
                     obscureText: false,
                   ),
-
-                  //Username
                   const SizedBox(height: 40),
                   MyTextField(
                     controller: usernameController,
                     hintText: 'Username',
                     obscureText: false,
                   ),
-                  //Password
                   const SizedBox(height: 40),
                   MyTextField(
                     controller: passwordController,
                     hintText: 'Password',
                     obscureText: true,
                   ),
-
-                  //LoginButton
                   const SizedBox(height: 25),
                   MyButton(
                     onTap:
-                        signUserIn, 
+                        signUserIn, // Ensure your MyButton widget supports onTap parameter
                   ),
-                
                 ],
               ),
             ),

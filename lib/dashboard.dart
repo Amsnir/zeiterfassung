@@ -66,6 +66,8 @@ class _HomePageState extends State<BuchenFenster> {
     return Scaffold(
       body: Column(
         children: [
+          const SizedBox(height: 75),
+          Image.asset('lib/images/LHR.png'),
           Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -73,12 +75,13 @@ class _HomePageState extends State<BuchenFenster> {
                 bottomRight: Radius.circular(20.0),
               ),
             ),
-            child: Image.asset(
+            /* child: 
+            Image.asset(
               'lib/images/LHR.png',
               width: 300.0,
               height: 200.0,
               fit: BoxFit.cover,
-            ),
+            ),*/
           ),
           // Label above the clock
           Padding(
