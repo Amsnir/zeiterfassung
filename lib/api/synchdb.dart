@@ -1,17 +1,15 @@
 import 'dart:developer';
 
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:http/http.dart';
-import 'package:zeiterfassung_v1/api/apiHandler.dart';
+import 'package:zeiterfassung_v1/api/ApiHandler.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/dienstnehmer.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 
 void synchData() async {
   final dienstnehmer = new Dienstnehmer();
 
-  // var data2 = await fetchBearerToken();
-  // var data = await fetchDienstnehmer();
-//  log(data.toString());
+  //var data = fetchAlbum();
+  // log(data.toString());
   dienstnehmer.DN_ID = 1;
   dienstnehmer.DN_FA_KZ = 'd';
   dienstnehmer.DN_FA_NR = 1;
@@ -38,9 +36,9 @@ void synchData() async {
   // dienstnehmer3.DN_VORNAME = "Amir";
   // dienstnehmer3.DN_STATUS = 0;
 
-  // final dienstnehmerbox =
-  //     await HiveFactory.openBox<Dienstnehmer>('dienstnehmer');
-  // dienstnehmerbox.add(dienstnehmer);
+  final dienstnehmerbox =
+      await HiveFactory.openBox<Dienstnehmer>('dienstnehmer');
+  dienstnehmerbox.add(dienstnehmer);
   // dienstnehmerbox.add(dienstnehmer2);
   // dienstnehmerbox.add(dienstnehmer3);
 }
