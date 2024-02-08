@@ -1,7 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
 import 'package:zeiterfassung_v1/login/components/my_button.dart';
 import 'package:zeiterfassung_v1/login/components/my_textfield.dart';
@@ -22,40 +22,31 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   Future<void> signUserIn() async {
-    setState(() {
-      _isLoading = true;
-    });
+  setState(() {
+    _isLoading = true;
+  });
 
-    final cookie = await ApiHandler.getCookie(
-      serverController.text,
-      usernameController.text,
-      passwordController.text,
-    );
+  final success = await ApiHandler.getCookie(
+    serverController.text,
+    usernameController.text,
+    passwordController.text,
+  );
 
-    if (cookie != null) {
-      // Save the cookie in SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('cookie', cookie);
-
-      // Navigate to DNAuswahlPage
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => DNAuswahlPage()),
-      );
-    } else {
-      // Show an error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                'Login failed, please check your credentials and try again.')),
-      );
-    }
-
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  if (success==true) {
+    // Success: Navigate to DNAuswahlPage
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DNAuswahlPage()));
+  } else {
+    // Failure: Show an error message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed, please check your credentials and try again.')));
   }
+
+  if (mounted) {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
