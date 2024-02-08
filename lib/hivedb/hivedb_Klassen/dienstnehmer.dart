@@ -16,7 +16,7 @@ class Dienstnehmer extends HiveObject {
 
   @HiveField(3)
   late int DN_NR;
-
+  
   @HiveField(4)
   late String DN_NAME;
 
