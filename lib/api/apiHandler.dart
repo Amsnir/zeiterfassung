@@ -13,8 +13,7 @@ class ApiHandler {
 
   ApiHandler._();
 
-  static Future<bool?> getCookie(
-      String serverUrl, String username, String password) async {
+  static Future<bool?> getCookie(String serverUrl, String username, String password) async {
     final url = Uri.parse(
         '$serverUrl/Self/login?username=$username&password=$password');
     try {
