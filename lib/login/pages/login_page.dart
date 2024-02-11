@@ -30,14 +30,16 @@ class _LoginPageState extends State<LoginPage> {
     final serverUrl = await storage.read(key: 'serverUrl');
     final username = await storage.read(key: 'username');
     final password = await storage.read(key: 'password');
+
     // Consider not loading the password for enhanced security
     // and prompt the user to enter it each time
 
     // Load credentials if available
-    if (serverUrl != null && username != null) {
+    if (serverUrl != null && username != null && password != null) {
       setState(() {
         serverController.text = serverUrl;
         usernameController.text = username;
+        passwordController.text = password;
         _saveLoginInfo = true;
       });
     }
@@ -108,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                   ),
                   CheckboxListTile(
-                    title: Text("Save login information"),
+                    title: Text("Anmeldedaten merken"),
                     value: _saveLoginInfo,
                     onChanged: (bool? value) {
                       setState(() {
