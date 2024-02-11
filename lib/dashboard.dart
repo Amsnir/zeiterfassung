@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zeiterfassung_v1/buchen.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/dienstnehmer.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,14 +16,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BuchenFenster(
-        dienstnehmer: Dienstnehmer(),
+        dienstnehmer: Dienstnehmerstamm(name: "a", nachname: "a"),
       ),
     );
   }
 }
 
 class BuchenFenster extends StatefulWidget {
-  final Dienstnehmer dienstnehmer;
+  final Dienstnehmerstamm dienstnehmer;
 
   BuchenFenster({Key? key, required this.dienstnehmer}) : super(key: key);
 
@@ -58,7 +59,7 @@ class _HomePageState extends State<BuchenFenster> {
   }
 
   void buchenWithDienstnehmer() {
-    buchen(widget.dienstnehmer);
+    buchen(widget.dienstnehmer as Dienstnehmer);
   }
 
   @override
@@ -87,7 +88,7 @@ class _HomePageState extends State<BuchenFenster> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              widget.dienstnehmer.DN_NAME.toString(),
+              widget.dienstnehmer.name.toString(),
               style: const TextStyle(fontSize: 20.0, color: Colors.grey),
             ),
           ),

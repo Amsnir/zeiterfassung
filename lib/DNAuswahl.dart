@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:zeiterfassung_v1/dynamicbuttonswidget.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: DNAuswahlPage(),
-    );
-  }
-}
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
+// Ensure you import your ApiHandler here
+import 'package:zeiterfassung_v1/api/apiHandler.dart';
 
 class DNAuswahlPage extends StatefulWidget {
   const DNAuswahlPage({Key? key}) : super(key: key);
@@ -24,6 +15,23 @@ class DNAuswahlPage extends StatefulWidget {
 }
 
 class _HomePageState extends State<DNAuswahlPage> {
+  final storage = FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    String? cookie = await storage.read(key: 'cookie');
+    if (cookie != null) {
+      await ApiHandler.fetchDienstnehmerData(cookie);
+      // Optionally, you might want to refresh the UI or perform other actions once data is fetched
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,20 +39,6 @@ class _HomePageState extends State<DNAuswahlPage> {
         children: [
           const SizedBox(height: 75),
           Image.asset('lib/images/LHR.png'),
-          /*Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20.0),
-                bottomRight: Radius.circular(20.0),
-              ),
-            ),
-            child: Image.asset(
-              'assets/LHR_Logo_orange-blau_RGB_transparent_Latzer.png',
-              width: 300.0,
-              height: 200.0,
-              fit: BoxFit.cover,
-            ),
-          ),*/
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
