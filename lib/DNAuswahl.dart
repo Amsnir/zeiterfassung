@@ -27,7 +27,6 @@ class _HomePageState extends State<DNAuswahlPage> {
     String? cookie = await storage.read(key: 'cookie');
     if (cookie != null) {
       await ApiHandler.fetchDienstnehmerData(cookie);
-      // Optionally, you might want to refresh the UI or perform other actions once data is fetched
       setState(() {});
     }
   }

@@ -81,12 +81,7 @@ static Future<void> fetchDienstnehmerData(String cookie) async {
       }
     } catch (e) {
       print('Error fetching data: $e');
-    } finally {
-      // It's good practice to close boxes if they are no longer needed, especially if opened just for a transaction
-      // However, closing and opening frequently can be less efficient, so consider your app's use case
-      // await dienstnehmerBox.close();
-      // await dienstnehmerstammBox.close();
-    }
+    } 
 }
 
 }
