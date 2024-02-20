@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zeiterfassung_v1/buchen.dart';
-import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/dienstnehmer.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 
 void main() {
@@ -59,7 +58,7 @@ class _HomePageState extends State<BuchenFenster> {
   }
 
   void buchenWithDienstnehmer() {
-    buchen(widget.dienstnehmer as Dienstnehmer);
+    buchen();
   }
 
   @override

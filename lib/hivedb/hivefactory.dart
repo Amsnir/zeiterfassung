@@ -1,9 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/abwesenheiten.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/buchungen.dart';
-import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/dienstnehmer.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/parameter.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_Klassen/synch.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 
 class HiveFactory {
   static final HiveFactory _instance = HiveFactory._();
@@ -23,6 +24,7 @@ class HiveFactory {
   }
 
   static Future<void> registerAdapter() async {
+    Hive.registerAdapter(DienstnehmerstammAdapter());
     Hive.registerAdapter(DienstnehmerAdapter());
     Hive.registerAdapter(BuchungenAdapter());
     Hive.registerAdapter(AbwesenheitenAdapter());

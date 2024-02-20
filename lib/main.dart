@@ -11,8 +11,8 @@ import 'package:zeiterfassung_v1/login/pages/login_page.dart';
 void main() async {
   await HiveFactory.initHive();
   await HiveFactory.registerAdapter();
- await Hive.openBox<Dienstnehmer>('dienstnehmertest');
-await Hive.openBox<Dienstnehmerstamm>('dienstnehmerstammtest');
+  await Hive.openBox<Dienstnehmer>('dienstnehmertest');
+  await Hive.openBox<Dienstnehmerstamm>('dienstnehmerstammtest');
 
   synchData();
 
