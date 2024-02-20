@@ -21,26 +21,33 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
   }
 
   void loadDienstnehmerData() async {
-    final box = Hive.box<Dienstnehmerstamm>('dienstnehmerstammtest');
+    final box =
+        await HiveFactory.listBox<Dienstnehmerstamm>('dienstnehmerstammtest');
     setState(() {
-      dienstnehmerList = box.values.toList();
+      dienstnehmerList = box;
     });
   }
 
   Widget _buildButtons() {
-    return ListView.builder(
-      itemCount: dienstnehmerList.length,
-      itemBuilder: (context, index) {
-        final dienstnehmer = dienstnehmerList[index];
-        String buttonLabel = "${dienstnehmer.nachname} ${dienstnehmer.name}";
-        return ElevatedButton(
-          onPressed: () {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => BuchenFenster(dienstnehmer: dienstnehmer,)));
+    return Container(
+        height: 300,
+        child: ListView.builder(
+          itemCount: dienstnehmerList.length,
+          itemBuilder: (context, index) {
+            final dienstnehmer = dienstnehmerList[index];
+            String buttonLabel =
+                "${dienstnehmer.nachname} ${dienstnehmer.name}";
+            return ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => BuchenFenster(
+                          dienstnehmer: dienstnehmer,
+                        )));
+              },
+              child: Text(buttonLabel),
+            );
           },
-          child: Text(buttonLabel),
-        );
-      },
-    );
+        ));
   }
 
   @override

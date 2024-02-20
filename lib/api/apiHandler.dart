@@ -32,6 +32,7 @@ class ApiHandler {
         final cookie = response.headers['set-cookie'];
         // Save the cookie using flutter_secure_storage
         print(cookie);
+        print('Failed to load data: ${response.statusCode}');
         final storage = FlutterSecureStorage();
         await storage.write(key: 'cookie', value: cookie2!);
         return true;
@@ -47,27 +48,22 @@ class ApiHandler {
   static Future<void> fetchDienstnehmerData(String cookie) async {
     final url = Uri.parse(
         "https://app.lohn.at/Self/api/v1/firmengruppen/GF/firmen/1/dienstnehmer/6669");
-
     try {
-      final response = await http.get(
-        url,
-        headers: {'Cookie': cookie},
-      );
+      final response = await http.get(url, headers: {'Cookie': cookie});
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        var dienstnehmerBox =
-            await HiveFactory.openBox<Dienstnehmer>('dienstnehmertest');
-        var dienstnehmerstammBox = await HiveFactory.openBox<Dienstnehmerstamm>(
-            'dienstnehmerstammtest');
-
+        print(data);
         final dienstnehmerData = data['dienstnehmer'];
         final dienstnehmer = Dienstnehmer(
           faKz: dienstnehmerData['faKz'],
           faNr: dienstnehmerData['faNr'],
           dnNr: dienstnehmerData['dnNr'],
         );
+
+        var dienstnehmerBox =
+            await HiveFactory.openBox<Dienstnehmer>('dienstnehmertest');
+        // await dienstnehmerBox.clear();
         await dienstnehmerBox.add(dienstnehmer);
         HiveFactory.closeBox(dienstnehmerBox);
 
@@ -76,10 +72,11 @@ class ApiHandler {
           name: dienstnehmerstammData['name'],
           nachname: dienstnehmerstammData['nachname'],
         );
+        var dienstnehmerstammBox = await HiveFactory.openBox<Dienstnehmerstamm>(
+            'dienstnehmerstammtest');
+        //  await dienstnehmerBox.clear();
         await dienstnehmerstammBox.add(dienstnehmerstamm);
         HiveFactory.closeBox(dienstnehmerstammBox);
-
-        print("tmm bruder");
       } else {
         print('Failed to load data: ${response.statusCode}');
       }

@@ -87,7 +87,8 @@ class _HomePageState extends State<BuchenFenster> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Text(
-              widget.dienstnehmer.name.toString(),
+              widget.dienstnehmer.name.toString() +
+                  widget.dienstnehmer.nachname.toString(),
               style: const TextStyle(fontSize: 20.0, color: Colors.grey),
             ),
           ),
