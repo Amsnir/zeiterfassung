@@ -55,7 +55,13 @@ class _HomePageState extends State<DNAuswahlPage> {
                     ),
                   ),
                   const SizedBox(height: 20.0),
-                  DynamicButtonsWidget(),
+                  Flexible(
+                    // Wrap the DynamicButtonsWidget in a Flexible widget
+                    child: SingleChildScrollView(
+                      // Make it scrollable
+                      child: DynamicButtonsWidget(),
+                    ),
+                  ),
                 ],
               ),
             ),

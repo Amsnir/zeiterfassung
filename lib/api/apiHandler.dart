@@ -32,7 +32,6 @@ class ApiHandler {
         final cookie = response.headers['set-cookie'];
         // Save the cookie using flutter_secure_storage
         print(cookie);
-        print('Failed to load data: ${response.statusCode}');
         final storage = FlutterSecureStorage();
         await storage.write(key: 'cookie', value: cookie2!);
         return true;
@@ -46,36 +45,46 @@ class ApiHandler {
   }
 
   static Future<void> fetchDienstnehmerData(String cookie) async {
-    final url = Uri.parse(
-        "https://app.lohn.at/Self/api/v1/firmengruppen/GF/firmen/1/dienstnehmer/6669");
+    final url = Uri.parse("https://app.lohn.at/Self/api/v1/dienstnehmer");
     try {
+      var dienstnehmerBox =
+          await HiveFactory.openBox<Dienstnehmer>('dienstnehmertest');
+      var dienstnehmerstammBox =
+          await HiveFactory.openBox<Dienstnehmerstamm>('dienstnehmerstammtest');
+
+      await dienstnehmerstammBox.clear();
+      await dienstnehmerBox.clear();
+
       final response = await http.get(url, headers: {'Cookie': cookie});
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        print(data);
-        final dienstnehmerData = data['dienstnehmer'];
-        final dienstnehmer = Dienstnehmer(
-          faKz: dienstnehmerData['faKz'],
-          faNr: dienstnehmerData['faNr'],
-          dnNr: dienstnehmerData['dnNr'],
-        );
+        // Decode the JSON response
+        final List<dynamic> dataList = json.decode(response.body);
 
-        var dienstnehmerBox =
-            await HiveFactory.openBox<Dienstnehmer>('dienstnehmertest');
-        // await dienstnehmerBox.clear();
-        await dienstnehmerBox.add(dienstnehmer);
+        // Iterate over each item in the decoded list
+        for (var item in dataList) {
+          // Extract dienstnehmer data
+          final dienstnehmerData = item['dienstnehmer'];
+          final Dienstnehmer dienstnehmer = Dienstnehmer(
+            faKz: dienstnehmerData['faKz'],
+            faNr: dienstnehmerData['faNr'],
+            dnNr: dienstnehmerData['dnNr'],
+          );
+          // Add dienstnehmer to the Hive box
+          await dienstnehmerBox.add(dienstnehmer);
+
+          // Extract dienstnehmerstamm data
+          final dienstnehmerstammData = item['dienstnehmerstamm'];
+          final Dienstnehmerstamm dienstnehmerstamm = Dienstnehmerstamm(
+            name: dienstnehmerstammData['name'],
+            nachname: dienstnehmerstammData['nachname'],
+          );
+          // Add dienstnehmerstamm to the Hive box
+          await dienstnehmerstammBox.add(dienstnehmerstamm);
+        }
+
+        // Close Hive boxes after operations
         HiveFactory.closeBox(dienstnehmerBox);
-
-        final dienstnehmerstammData = data['dienstnehmerstamm'];
-        final dienstnehmerstamm = Dienstnehmerstamm(
-          name: dienstnehmerstammData['name'],
-          nachname: dienstnehmerstammData['nachname'],
-        );
-        var dienstnehmerstammBox = await HiveFactory.openBox<Dienstnehmerstamm>(
-            'dienstnehmerstammtest');
-        //  await dienstnehmerBox.clear();
-        await dienstnehmerstammBox.add(dienstnehmerstamm);
         HiveFactory.closeBox(dienstnehmerstammBox);
       } else {
         print('Failed to load data: ${response.statusCode}');

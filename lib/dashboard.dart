@@ -4,10 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:zeiterfassung_v1/buchen.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
