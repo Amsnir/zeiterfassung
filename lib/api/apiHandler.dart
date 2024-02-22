@@ -47,17 +47,17 @@ class ApiHandler {
   static Future<void> fetchDienstnehmerData(String cookie) async {
     final url = Uri.parse("https://app.lohn.at/Self/api/v1/dienstnehmer");
     try {
+      final response = await http.get(url, headers: {'Cookie': cookie});
+
       var dienstnehmerBox =
           await HiveFactory.openBox<Dienstnehmer>('dienstnehmertest');
       var dienstnehmerstammBox =
           await HiveFactory.openBox<Dienstnehmerstamm>('dienstnehmerstammtest');
 
-      await dienstnehmerstammBox.clear();
-      await dienstnehmerBox.clear();
-
-      final response = await http.get(url, headers: {'Cookie': cookie});
-
       if (response.statusCode == 200) {
+        await dienstnehmerBox.clear();
+        await dienstnehmerstammBox.clear();
+
         // Decode the JSON response
         final List<dynamic> dataList = json.decode(response.body);
 
@@ -70,6 +70,7 @@ class ApiHandler {
             faNr: dienstnehmerData['faNr'],
             dnNr: dienstnehmerData['dnNr'],
           );
+
           // Add dienstnehmer to the Hive box
           await dienstnehmerBox.add(dienstnehmer);
 
@@ -84,8 +85,8 @@ class ApiHandler {
         }
 
         // Close Hive boxes after operations
-        // HiveFactory.closeBox(dienstnehmerBox);
-        // HiveFactory.closeBox(dienstnehmerstammBox);
+        HiveFactory.closeBox(dienstnehmerBox);
+        HiveFactory.closeBox(dienstnehmerstammBox);
       } else {
         print('Failed to load data: ${response.statusCode}');
       }
