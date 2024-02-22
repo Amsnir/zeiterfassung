@@ -25,7 +25,7 @@ class _BuchenPageState extends State<BuchenPage> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('HH:mm:ss')
+    return DateFormat('HH:mm')
         .format(dateTime); // Using intl package for formatting
   }
 
