@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/dashboard.dart';
+import 'package:zeiterfassung_v1/buchen/buchen_page.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
@@ -12,7 +13,9 @@ class DynamicButtonsWidget extends StatefulWidget {
 }
 
 class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
-  late List<Dienstnehmerstamm> dienstnehmerList = [];
+  //Creating 2 Lists
+  late List<Dienstnehmerstamm> dienstnehmerstammList = [];
+  late List<Dienstnehmer> dienstnehmerList = [];
 
   @override
   void initState() {
@@ -21,10 +24,15 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
   }
 
   void loadDienstnehmerData() async {
-    final box =
+    final dienstnehmerstammdaten =
         await HiveFactory.listBox<Dienstnehmerstamm>('dienstnehmerstammtest');
+    final dienstnehmerdaten =
+        await HiveFactory.listBox<Dienstnehmer>('dienstnehmertest');
+
     setState(() {
-      dienstnehmerList = box;
+      // the lists seperate dienstnehmerstamm (name, nachname) and dienstnehmer(faNr, faKz, dnNr)
+      dienstnehmerstammList = dienstnehmerstammdaten;
+      dienstnehmerList = dienstnehmerdaten;
     });
   }
 
@@ -32,18 +40,16 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
     return Container(
       height: 300,
       child: ListView.builder(
-        itemCount: dienstnehmerList.length,
+        itemCount: dienstnehmerstammList.length,
         itemBuilder: (context, index) {
-          final dienstnehmer = dienstnehmerList[index];
+          final dienstnehmer = dienstnehmerstammList[index];
           String buttonLabel = "${dienstnehmer.nachname} ${dienstnehmer.name}";
           return Column(
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => BuchenFenster(
-                            dienstnehmer: dienstnehmer,
-                          )));
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => BuchenPage()));
                 },
                 style: ElevatedButton.styleFrom(
                   fixedSize: const Size(200, 50),
@@ -67,7 +73,7 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return dienstnehmerList.isEmpty
+    return dienstnehmerstammList.isEmpty
         ? CircularProgressIndicator()
         : _buildButtons();
   }

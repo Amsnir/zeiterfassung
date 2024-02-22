@@ -84,8 +84,8 @@ class ApiHandler {
         }
 
         // Close Hive boxes after operations
-        HiveFactory.closeBox(dienstnehmerBox);
-        HiveFactory.closeBox(dienstnehmerstammBox);
+        // HiveFactory.closeBox(dienstnehmerBox);
+        // HiveFactory.closeBox(dienstnehmerstammBox);
       } else {
         print('Failed to load data: ${response.statusCode}');
       }
