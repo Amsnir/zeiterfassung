@@ -42,14 +42,21 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
       child: ListView.builder(
         itemCount: dienstnehmerstammList.length,
         itemBuilder: (context, index) {
-          final dienstnehmer = dienstnehmerstammList[index];
-          String buttonLabel = "${dienstnehmer.nachname} ${dienstnehmer.name}";
+          final dienstnehmerstamm = dienstnehmerstammList[index];
+          String buttonLabel =
+              "${dienstnehmerstamm.nachname} ${dienstnehmerstamm.name}";
           return Column(
             children: [
               ElevatedButton(
                 onPressed: () {
+                  // Assuming dienstnehmerList[index] contains the corresponding Dienstnehmer data
                   Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => BuchenPage()));
+                    MaterialPageRoute(
+                      builder: (context) => BuchenPage(
+                          dienstnehmer:
+                              dienstnehmerList[index]), // Adjust this line
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   fixedSize: const Size(200, 50),

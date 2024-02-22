@@ -94,4 +94,41 @@ class ApiHandler {
       print('Error fetching data: $e');
     }
   }
+
+  static Future<void> buchen(
+      {required Dienstnehmer dienstnehmer,
+      required String buchungsdatum}) async {
+    String apiUrl =
+        "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum";
+    print(apiUrl);
+
+    try {
+      final storage = FlutterSecureStorage();
+      String? cookie = await storage.read(key: 'cookie');
+
+      // Initialize headers. Add 'Cookie' only if it's not null.
+      Map<String, String> headers = {};
+      if (cookie != null) {
+        headers['Cookie'] = cookie; // Conditionally include the cookie
+      }
+
+      // Making the POST request without a body
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+      );
+
+      // Check the response status and body
+      if (response.statusCode == 200) {
+        // Handle successful request
+        print("Buchung erfolgreich");
+      } else {
+        // Handle error
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle any exceptions
+      print("Exception occurred: $e");
+    }
+  }
 }
