@@ -11,8 +11,18 @@ void main() async {
   //synchData();
 
   runApp(const MainApp());
+
+  // After runApp, check connectivity and process offline bookings
+  processOfflineBuchungenIfNeeded();
 }
 
+Future<void> processOfflineBuchungenIfNeeded() async {
+  // Check for connectivity
+  bool isConnected = await ApiHandler.checkConnectivity();
+  if (isConnected) {
+    await sendOfflineBuchungenToServer();
+  }
+}
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 

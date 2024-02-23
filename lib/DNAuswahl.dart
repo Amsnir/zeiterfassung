@@ -16,6 +16,9 @@ class DNAuswahlPage extends StatefulWidget {
 
 class _HomePageState extends State<DNAuswahlPage> {
   final storage = FlutterSecureStorage();
+  bool _offlineModus = false;
+  bool _isLoading = true;
+
 
   @override
   void initState() {
@@ -25,26 +28,45 @@ class _HomePageState extends State<DNAuswahlPage> {
 
   Future<void> fetchData() async {
     String? cookie = await storage.read(key: 'cookie');
-    if (cookie != null && ApiHandler.checkConnectivity()==true) {
+    if (cookie != null && await ApiHandler.checkConnectivity()==true) {
       await ApiHandler.fetchDienstnehmerData(cookie);
       setState(() {});
+       _isLoading = false;
+
+    }
+    else {
+       _offlineModus = true;
+    print("Offline mode enabled for Dienstnehmer Page");
+
+    setState(() {
+    _isLoading = false; // Stop loading
+  });
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 75),
-          Image.asset('lib/images/LHR.png'),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20.0),
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: _isLoading 
+      ? Center(child: CircularProgressIndicator()) // Show loading indicator when data is loading
+      : Column( // Main content of the page
+          children: [
+            if (_offlineModus)
+              const Text("Offline Mode",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold)),
+            const SizedBox(height: 75),
+            Image.asset('lib/images/LHR.png'), // Make sure your asset path is correct
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20.0),
                   const Text(
                     'DIENSTNEHMERAUSWAHL',
                     textAlign: TextAlign.center,

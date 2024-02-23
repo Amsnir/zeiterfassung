@@ -8,6 +8,8 @@ import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/zeitspeicher.dart';
 
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/offlinebuchung.dart';
+
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 
 class ApiHandler {
@@ -222,7 +224,7 @@ class ApiHandler {
 static Future <bool> checkConnectivity() async {
 
   String url =
-        "https://app.at/Self/api/v1/nigga";
+        "https://app.lohn.at/Self/api/v1";
 
   try {
      final response = await http.get(Uri.parse(url));
@@ -231,7 +233,7 @@ static Future <bool> checkConnectivity() async {
           return true;
      }
      else{
-      print("No Connection, Offline Modus");
+      print("No Connection, Offline Modus ${response.statusCode}" );
       return false;
      }
  
@@ -241,4 +243,39 @@ catch(e){
 return false;
 }
 }
+}
+
+
+
+
+Future<void> sendOfflineBuchungenToServer() async {
+  Box<Buchungen> box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
+
+  List<Buchungen> buchungen = box.values.toList();
+
+print("Soviele Offline Buchungen ${buchungen.length}");
+
+  for (Buchungen buchung in buchungen) {
+  // Create a Dienstnehmer object from the Buchungen data
+  Dienstnehmer dienstnehmer = Dienstnehmer(
+    faKz: buchung.faKz,
+    faNr: buchung.faNr,
+    dnNr: buchung.dnNr,
+  );
+
+  // Implement the logic to send booking to the server
+  bool wasSuccessful = await ApiHandler.buchen(
+    dienstnehmer: dienstnehmer,
+    buchungsdatum: buchung.timestamp,
+    zeitdatenId: buchung.nummer,
+    // Include other necessary parameters
+  );
+print("Buchung geschickt!");
+    if (wasSuccessful) {
+      // If the booking was successfully sent, remove it from the box
+      await buchung.delete(); // This removes the booking from the Hive box
+    }
+  }
+
+  await HiveFactory.closeBox(box);
 }

@@ -5,6 +5,7 @@ import 'package:zeiterfassung_v1/api/apiHandler.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/zeitspeicher.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/offlinebuchung.dart';
 
 import 'package:hive_flutter/hive_flutter.dart'; // Make sure to import Hive
 
@@ -20,6 +21,9 @@ class BuchenPage extends StatefulWidget {
 class _BuchenPageState extends State<BuchenPage> {
   late String _timeString;
   bool _showSuccessMessage = false;
+  bool _showofflineMessage = false;
+  bool _offlineModus = false;
+  bool _isLoading = true;
   // Assuming Zeitspeicher objects are being used, replacing List<String> with List<Zeitspeicher>
   List<Zeitspeicher> bookingOptions = []; // Holds Zeitspeicher objects
   Zeitspeicher? _selectedBookingOption; // Holds the selected name as a String
@@ -34,16 +38,29 @@ class _BuchenPageState extends State<BuchenPage> {
     _fetchAndStoreZeitdaten();
   }
 
+//-------------------- Zeitspeicher wird geladen ----------------------------
+
   void _fetchAndStoreZeitdaten() async {
-    if(ApiHandler.checkConnectivity()==true){
+  setState(() {
+    _isLoading = true; // Start loading
+  });
+
+  if (await ApiHandler.checkConnectivity()) {
     await ApiHandler.fetchZeitdaten(widget.dienstnehmer);
     // Assuming fetchZeitdaten stores the fetched data in Hive
-    }
-    else{
-      print("Offline mode enabled");
-    }
-    _loadDataFromHive(); // Load the stored data into the widget state
+  } else {
+    _offlineModus = true;
+    print("Offline mode enabled for Buchen Page");
   }
+
+  _loadDataFromHive(); // Load the stored data into the widget state
+
+  setState(() {
+    _isLoading = false; // Stop loading
+  });
+}
+
+
 
   void _loadDataFromHive() async {
     var box = await HiveFactory.openBox<Zeitspeicher>('zeitspeicher');
@@ -62,6 +79,9 @@ class _BuchenPageState extends State<BuchenPage> {
     print("Loaded ${bookingOptions.length} booking options from Hive.");
   }
 
+//------------------Aktuelle Zeit des Handys holen ----------------------------
+
+
   void _getTime() {
     final String formattedDateTime = _formatDateTime(DateTime.now());
     setState(() {
@@ -73,8 +93,12 @@ class _BuchenPageState extends State<BuchenPage> {
     return DateFormat('HH:mm').format(dateTime);
   }
 
-  void _attemptBooking() {
-    if (_selectedBookingOption != null && ApiHandler.checkConnectivity()==true) {
+
+//---------------------Buchen versuchen oder in offline Einfügen -------------------------
+
+
+  Future<void> _attemptBooking() async {
+    if (_selectedBookingOption != null && await ApiHandler.checkConnectivity()==true) {
       var bookingFuture = ApiHandler.buchen(
         dienstnehmer: widget.dienstnehmer,
         buchungsdatum:
@@ -93,20 +117,75 @@ class _BuchenPageState extends State<BuchenPage> {
           });
         }
       });
-    } else {
+    } else if(await ApiHandler.checkConnectivity()==false){
+
+       saveOfflineBuchung(
+      faKz: widget.dienstnehmer.faKz,
+      faNr: widget.dienstnehmer.faNr,
+      dnNr: widget.dienstnehmer.dnNr,
+      nummer: _selectedBookingOption!.nummer,
+      timestamp: DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
+    );
         print("Buchen nicht erfolgreich");
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+
+//----------------- Saving Buchung into offline Database ------------------------
+
+  Future<void> saveOfflineBuchung({
+  required String faKz,
+  required int faNr,
+  required int dnNr,
+  required int nummer,
+  required String timestamp,
+}) async {
+  Box<Buchungen> offlinebuchungBox = await HiveFactory.openBox<Buchungen>('offlinebuchung');
+  final buchung = Buchungen(
+    faKz: faKz,
+    faNr: faNr,
+    dnNr: dnNr,
+    nummer: nummer,
+    timestamp: timestamp,
+  );
+
+  await offlinebuchungBox.add(buchung);
+        print("Items in zeitspeicherBox: ${offlinebuchungBox.length}");
+
+      setState(() {
+            _showofflineMessage  = true;
+          });
+      Future.delayed(const Duration(seconds: 5), () {
+            setState(() {
+              _showSuccessMessage = false;
+            });
+          });
+
+  await HiveFactory.closeBox(offlinebuchungBox);
+}
+
+//------------------------ Frontend ----------------------------
+
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: _isLoading 
+      ? Center(child: CircularProgressIndicator()) // Show loading indicator
+      : Center( // Your actual page content
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 50),
-            Image.asset('lib/images/LHR.png'), // Placeholder for your image
+
+           if (_offlineModus)
+              const Text("Offline Mode",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold)),
+
+             const SizedBox(height: 50),
+            Image.asset('lib/images/LHR.png'), 
             Text(
               _timeString,
               style: const TextStyle(
@@ -172,6 +251,14 @@ class _BuchenPageState extends State<BuchenPage> {
                       fontSize: 20.0,
                       color: Colors.green,
                       fontWeight: FontWeight.bold)),
+            if(_showofflineMessage)
+              const Text("Buchung lokal gespeichert. Keine Internetverbindung",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold)),
+
           ],
         ),
       ),
