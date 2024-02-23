@@ -168,14 +168,13 @@ class _BuchenPageState extends State<BuchenPage> {
 
  @override
 Widget build(BuildContext context) {
-  return Scaffold(
+ return Scaffold(
     body: _isLoading 
-      ? Center(child: CircularProgressIndicator()) // Show loading indicator
-      : Center( // Your actual page content
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-
+      ? Center(child: CircularProgressIndicator()) // Show loading indicator when data is loading
+      : Column(
+         mainAxisAlignment: MainAxisAlignment.center, // Main content of the page
+          children: [
+          const SizedBox(height: 10),
            if (_offlineModus)
               const Text("Offline Mode",
                   textAlign: TextAlign.center,
@@ -184,7 +183,7 @@ Widget build(BuildContext context) {
                       color: Colors.red,
                       fontWeight: FontWeight.bold)),
 
-             const SizedBox(height: 50),
+             const SizedBox(height: 75),
             Image.asset('lib/images/LHR.png'), 
             Text(
               _timeString,
@@ -193,6 +192,7 @@ Widget build(BuildContext context) {
                   color: Color(0xFF443B5A),
                   fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 30.0),
             DropdownButtonHideUnderline(
               child: Container(
                 padding:
@@ -222,7 +222,8 @@ Widget build(BuildContext context) {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 100),
+
             GestureDetector(
               onTap: _attemptBooking,
               child: Container(
@@ -232,6 +233,7 @@ Widget build(BuildContext context) {
                   color: const Color.fromRGBO(28, 53, 80, 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
+                
                 child: const Center(
                   child: Text(
                     "B U C H E N",
@@ -260,8 +262,8 @@ Widget build(BuildContext context) {
                       fontWeight: FontWeight.bold)),
 
           ],
+
         ),
-      ),
-    );
+ );
   }
 }

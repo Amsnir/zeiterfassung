@@ -49,8 +49,10 @@ Widget build(BuildContext context) {
   return Scaffold(
     body: _isLoading 
       ? Center(child: CircularProgressIndicator()) // Show loading indicator when data is loading
-      : Column( // Main content of the page
+      : Column(
+         mainAxisAlignment: MainAxisAlignment.center, // Main content of the page
           children: [
+            const SizedBox(height: 10),
             if (_offlineModus)
               const Text("Offline Mode",
                   textAlign: TextAlign.center,
