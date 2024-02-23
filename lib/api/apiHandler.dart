@@ -135,7 +135,7 @@ class ApiHandler {
         print('Failed to load Dienstnehmerdaten: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      print('Error fetching Dienstnehmerdata: $e');
     }
   }
 
@@ -166,7 +166,7 @@ class ApiHandler {
         return false;
       }
     } catch (e) {
-      print("Exception occurred: $e");
+      print("Buchen: Exception occurred: $e");
       return false;
     }
   }
@@ -215,4 +215,30 @@ class ApiHandler {
       print('Failed to load ${response.statusCode}');
     }
   }
+
+
+//----------------------CHECK CONNECTIVITY----------------------------
+
+static Future <bool> checkConnectivity() async {
+
+  String url =
+        "https://app.at/Self/api/v1/nigga";
+
+  try {
+     final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 404) {
+    print("Connection to internet established");
+          return true;
+     }
+     else{
+      print("No Connection, Offline Modus");
+      return false;
+     }
+ 
+  }
+catch(e){
+      print("Check Connectivity: Exception occurred: $e");
+return false;
+}
+}
 }

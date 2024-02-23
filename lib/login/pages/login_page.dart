@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   bool _isLoading = false;
-  final storage = FlutterSecureStorage(); // Secure storage instance
+  final storage = const FlutterSecureStorage(); // Secure storage instance
   bool _saveLoginInfo = false; // Checkbox state
 
   @override
@@ -31,8 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     final username = await storage.read(key: 'username');
     final password = await storage.read(key: 'password');
 
-    // Consider not loading the password for enhanced security
-    // and prompt the user to enter it each time
+ 
 
     // Load credentials if available
     if (serverUrl != null && username != null && password != null) {
@@ -74,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => DNAuswahlPage()));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
               'Login failed, please check your credentials and try again.')));
     }
@@ -90,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
@@ -116,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                   ),
                   CheckboxListTile(
-                    title: Text("Anmeldedaten merken"),
+                    title: const Text("Anmeldedaten merken"),
                     value: _saveLoginInfo,
                     onChanged: (bool? value) {
                       setState(() {
@@ -129,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 25),
                   MyButton(
                     onTap:
-                        signUserIn, // Ensure your MyButton widget supports onTap parameter
+                        signUserIn,
                   ),
                 ],
               ),

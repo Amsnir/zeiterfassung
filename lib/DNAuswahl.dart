@@ -25,7 +25,7 @@ class _HomePageState extends State<DNAuswahlPage> {
 
   Future<void> fetchData() async {
     String? cookie = await storage.read(key: 'cookie');
-    if (cookie != null) {
+    if (cookie != null && ApiHandler.checkConnectivity()==true) {
       await ApiHandler.fetchDienstnehmerData(cookie);
       setState(() {});
     }
@@ -46,15 +46,15 @@ class _HomePageState extends State<DNAuswahlPage> {
                 children: [
                   const SizedBox(height: 20.0),
                   const Text(
-                    'Dienstnehmerauswahl',
+                    'DIENSTNEHMERAUSWAHL',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 30.0,
+                      fontSize: 20.0,
                       color: Colors.orange,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0,),
                   Flexible(
                     // Wrap the DynamicButtonsWidget in a Flexible widget
                     child: SingleChildScrollView(

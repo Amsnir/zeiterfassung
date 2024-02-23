@@ -35,9 +35,13 @@ class _BuchenPageState extends State<BuchenPage> {
   }
 
   void _fetchAndStoreZeitdaten() async {
+    if(ApiHandler.checkConnectivity()==true){
     await ApiHandler.fetchZeitdaten(widget.dienstnehmer);
     // Assuming fetchZeitdaten stores the fetched data in Hive
-
+    }
+    else{
+      print("Offline mode enabled");
+    }
     _loadDataFromHive(); // Load the stored data into the widget state
   }
 
@@ -70,7 +74,7 @@ class _BuchenPageState extends State<BuchenPage> {
   }
 
   void _attemptBooking() {
-    if (_selectedBookingOption != null) {
+    if (_selectedBookingOption != null && ApiHandler.checkConnectivity()==true) {
       var bookingFuture = ApiHandler.buchen(
         dienstnehmer: widget.dienstnehmer,
         buchungsdatum:
@@ -90,7 +94,7 @@ class _BuchenPageState extends State<BuchenPage> {
         }
       });
     } else {
-      print("sex on tghe beach");
+        print("Buchen nicht erfolgreich");
     }
   }
 
