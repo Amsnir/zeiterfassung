@@ -16,5 +16,3 @@ class Dienstnehmer {
 
   Dienstnehmer({required this.faKz, required this.faNr, required this.dnNr});
 }
-
-

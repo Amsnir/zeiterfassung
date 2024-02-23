@@ -1,8 +1,6 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:zeiterfassung_v1/dashboard.dart';
 import 'package:zeiterfassung_v1/buchen/buchen_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
@@ -13,7 +11,6 @@ class DynamicButtonsWidget extends StatefulWidget {
 }
 
 class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
-  //Creating 2 Lists
   late List<Dienstnehmerstamm> dienstnehmerstammList = [];
   late List<Dienstnehmer> dienstnehmerList = [];
 
@@ -30,13 +27,14 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
         await HiveFactory.listBox<Dienstnehmer>('dienstnehmertest');
 
     setState(() {
-      // the lists seperate dienstnehmerstamm (name, nachname) and dienstnehmer(faNr, faKz, dnNr)
       dienstnehmerstammList = dienstnehmerstammdaten;
       dienstnehmerList = dienstnehmerdaten;
     });
   }
 
-  Widget _buildButtons() {
+  Widget _buildButtons(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
       height: 300,
       child: ListView.builder(
@@ -45,33 +43,34 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
           final dienstnehmerstamm = dienstnehmerstammList[index];
           String buttonLabel =
               "${dienstnehmerstamm.nachname} ${dienstnehmerstamm.name}";
-          return Column(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Assuming dienstnehmerList[index] contains the corresponding Dienstnehmer data
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => BuchenPage(
-                          dienstnehmer:
-                              dienstnehmerList[index]), // Adjust this line
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(200, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+          return Container(
+            width: screenWidth - 20, // Adjust based on your design
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.only(bottom: 10),
+            child: ElevatedButton(
+              onPressed: () {
+                // Assuming dienstnehmerList[index] contains the corresponding Dienstnehmer data
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => BuchenPage(
+                        dienstnehmer:
+                            dienstnehmerList[index]), // Adjust this line
                   ),
-                  backgroundColor: Colors.grey,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: Text(
-                  buttonLabel,
-                  style: const TextStyle(fontSize: 20.0, color: Colors.white),
-                ),
+                backgroundColor: Colors.grey,
+                minimumSize:
+                    Size(screenWidth - 40, 50), // Adjust based on your design
               ),
-              const SizedBox(height: 10.0),
-            ],
+              child: Text(
+                buttonLabel,
+                style: const TextStyle(fontSize: 20.0, color: Colors.white),
+              ),
+            ),
           );
         },
       ),
@@ -82,6 +81,6 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
   Widget build(BuildContext context) {
     return dienstnehmerstammList.isEmpty
         ? CircularProgressIndicator()
-        : _buildButtons();
+        : _buildButtons(context);
   }
 }

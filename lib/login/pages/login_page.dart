@@ -61,7 +61,9 @@ class _LoginPageState extends State<LoginPage> {
         // Save credentials
         await storage.write(key: 'serverUrl', value: serverController.text);
         await storage.write(key: 'username', value: usernameController.text);
-        await storage.write(key: 'password', value: passwordController.text); // Storing the password securely
+        await storage.write(
+            key: 'password',
+            value: passwordController.text); // Storing the password securely
       } else {
         // Clear saved credentials if the user opts out
         await storage.delete(key: 'serverUrl');
@@ -69,9 +71,12 @@ class _LoginPageState extends State<LoginPage> {
         await storage.delete(key: 'password');
       }
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DNAuswahlPage()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => DNAuswahlPage()));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed, please check your credentials and try again.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Login failed, please check your credentials and try again.')));
     }
 
     if (mounted) {
@@ -90,7 +95,8 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 75),
-                  Image.asset('lib/images/LHR.png'), // Ensure your image path is correct
+                  Image.asset(
+                      'lib/images/LHR.png'), // Ensure your image path is correct
                   const SizedBox(height: 10),
                   MyTextField(
                     controller: serverController,
@@ -117,11 +123,13 @@ class _LoginPageState extends State<LoginPage> {
                         _saveLoginInfo = value ?? false;
                       });
                     },
-                    controlAffinity: ListTileControlAffinity.leading, // Position the checkbox at the start of the tile
+                    controlAffinity: ListTileControlAffinity
+                        .leading, // Position the checkbox at the start of the tile
                   ),
                   const SizedBox(height: 25),
                   MyButton(
-                    onTap: signUserIn, // Ensure your MyButton widget supports onTap parameter
+                    onTap:
+                        signUserIn, // Ensure your MyButton widget supports onTap parameter
                   ),
                 ],
               ),

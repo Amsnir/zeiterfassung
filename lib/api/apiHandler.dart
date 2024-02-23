@@ -17,32 +17,74 @@ class ApiHandler {
 
   ApiHandler._();
 
-  static Future<bool?> getCookie(
+//-----------------------GET COOKIE---------------------------------
+
+  static Future<bool> getCookie(
       String serverUrl, String username, String password) async {
     final url = Uri.parse(
-        '$serverUrl/Self/login?username=$username&password=$password');
+        '$serverUrl/Self/api/v1/login?username=$username&password=$password');
     try {
-      final response = await http.get(url);
+      final response = await http.post(url);
 
-      // Check if the response is successful and if the 'set-cookie' header is present
-      if (response.statusCode == 200 &&
-          response.headers['set-cookie'] != null) {
-        const cookie2 =
-            "PLAY_SESSION=94f47f0c4caf4ab36459c6f2a8f398c5e99f3684-___AT=021042df05682266dbbb6a951a6ba9455b1a6701&modulname=MA+Self+Service&bPwChange=true&___ID=c0ed605c-e127-4313-ba72-7073a0616609&username=NORRISCHU6669; Path=/;";
-        final cookie = response.headers['set-cookie'];
-        // Save the cookie using flutter_secure_storage
-        print(cookie);
-        final storage = FlutterSecureStorage();
-        await storage.write(key: 'cookie', value: cookie2!);
-        return true;
+      if (response.statusCode == 200) {
+        final cookieHeader = response.headers['set-cookie'];
+        if (cookieHeader != null) {
+          // Split the cookie string into individual cookies
+          final cookies = cookieHeader
+              .split(',')
+              .where((c) => c.trim().isNotEmpty)
+              .toList();
+
+          // This will hold the correctly separated cookies
+          List<String> separateCookies = [];
+
+          // Reconstruct the cookies respecting the commas within the dates
+          String? currentCookie;
+          for (var c in cookies) {
+            if (currentCookie != null) {
+              if (c.startsWith(' ')) {
+                currentCookie += ',' + c;
+                continue;
+              } else {
+                separateCookies.add(currentCookie);
+                currentCookie = null;
+              }
+            }
+            if (c.contains(';') &&
+                (c.contains('Expires') || c.contains('Max-Age'))) {
+              currentCookie = c;
+            } else {
+              separateCookies.add(c);
+            }
+          }
+          if (currentCookie != null) {
+            separateCookies.add(currentCookie);
+          }
+
+          // Find the PLAY_SESSION cookie
+          final playSessionCookie = separateCookies.firstWhere(
+            (cookie) => cookie.startsWith('PLAY_SESSION'),
+            orElse: () => '',
+          );
+
+          if (playSessionCookie.isNotEmpty) {
+            final storage = FlutterSecureStorage();
+            await storage.write(key: 'cookie', value: playSessionCookie);
+            print(playSessionCookie);
+            print("Login successful: ${response.statusCode}");
+            return true;
+          }
+        }
       } else {
         print('Failed to load data: ${response.statusCode}');
       }
     } catch (e) {
       print('Error signing in: $e');
     }
-    return false; // Return false if the request fails
+    return false;
   }
+
+//----------------------------GET DIENSTNEHMER-----------------------------
 
   static Future<void> fetchDienstnehmerData(String cookie) async {
     final url = Uri.parse("https://app.lohn.at/Self/api/v1/dienstnehmer");
@@ -88,47 +130,70 @@ class ApiHandler {
         HiveFactory.closeBox(dienstnehmerBox);
         HiveFactory.closeBox(dienstnehmerstammBox);
       } else {
-        print('Failed to load data: ${response.statusCode}');
+        print('Failed to load Dienstnehmerdaten: ${response.statusCode}');
       }
     } catch (e) {
       print('Error fetching data: $e');
     }
   }
 
-  static Future<void> buchen(
+//---------------------------- BUCHEN --------------------------------
+
+  static Future<bool> buchen(
       {required Dienstnehmer dienstnehmer,
       required String buchungsdatum}) async {
     String apiUrl =
         "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum";
-    print(apiUrl);
-
     try {
       final storage = FlutterSecureStorage();
       String? cookie = await storage.read(key: 'cookie');
-
-      // Initialize headers. Add 'Cookie' only if it's not null.
       Map<String, String> headers = {};
+
       if (cookie != null) {
-        headers['Cookie'] = cookie; // Conditionally include the cookie
+        headers['Cookie'] = cookie;
       }
 
-      // Making the POST request without a body
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        headers: headers,
-      );
+      var response = await http.post(Uri.parse(apiUrl), headers: headers);
 
-      // Check the response status and body
       if (response.statusCode == 200) {
-        // Handle successful request
         print("Buchung erfolgreich");
+        return true;
       } else {
-        // Handle error
         print("Error: ${response.statusCode}");
+        return false;
       }
     } catch (e) {
-      // Handle any exceptions
       print("Exception occurred: $e");
+      return false;
+    }
+  }
+
+//---------------------------- ZEITDATEN --------------------------
+
+  static Future<List<String>> fetchZeitdaten(Dienstnehmer dienstnehmer) async {
+    String url =
+        "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/zeitdaten";
+
+    final storage = FlutterSecureStorage();
+    String? cookie = await storage.read(key: 'cookie');
+    Map<String, String> headers = {};
+
+    if (cookie != null) {
+      headers['Cookie'] = cookie;
+    }
+
+    var response = await http.get(Uri.parse(url), headers: headers);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      List<dynamic> zeitspeicher = data['zeitspeicher'];
+      List<String> options =
+          zeitspeicher.map<String>((item) => item['name']).toList();
+
+      print(options);
+      return options;
+    } else {
+      return ['Failed to load ${response.statusCode}'];
     }
   }
 }
