@@ -6,6 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/zeitspeicher.dart';
+
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 
 class ApiHandler {
@@ -141,14 +143,15 @@ class ApiHandler {
 
   static Future<bool> buchen(
       {required Dienstnehmer dienstnehmer,
-      required String buchungsdatum}) async {
+      required String buchungsdatum,
+      required int zeitdatenId}) async {
+    print(zeitdatenId);
     String apiUrl =
         "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum";
     try {
       final storage = FlutterSecureStorage();
       String? cookie = await storage.read(key: 'cookie');
       Map<String, String> headers = {};
-
       if (cookie != null) {
         headers['Cookie'] = cookie;
       }
@@ -170,7 +173,7 @@ class ApiHandler {
 
 //---------------------------- ZEITDATEN --------------------------
 
-  static Future<List<String>> fetchZeitdaten(Dienstnehmer dienstnehmer) async {
+  static Future<void> fetchZeitdaten(Dienstnehmer dienstnehmer) async {
     String url =
         "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/zeitdaten";
 
@@ -187,13 +190,29 @@ class ApiHandler {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       List<dynamic> zeitspeicher = data['zeitspeicher'];
-      List<String> options =
-          zeitspeicher.map<String>((item) => item['name']).toList();
 
-      print(options);
-      return options;
+      // Open the Hive box
+      Box<Zeitspeicher> zeitspeicherBox =
+          await HiveFactory.openBox<Zeitspeicher>('zeitspeicher');
+
+      // Clear the existing items
+      await zeitspeicherBox.clear();
+
+      // Add new items to the box
+      for (var item in zeitspeicher) {
+        final Zeitspeicher zeitspeicherInstance = Zeitspeicher(
+            nummer: item['nummer'], // Directly access 'nummer' from 'item'
+            name: item['name']); // Directly access 'name' from 'item'
+        print(
+            "Adding to Hive: ${zeitspeicherInstance.name}, ${zeitspeicherInstance.nummer}");
+        await zeitspeicherBox.add(zeitspeicherInstance);
+      }
+      print("Items in zeitspeicherBox: ${zeitspeicherBox.length}");
+
+      // Close the box when done
+      await HiveFactory.closeBox(zeitspeicherBox);
     } else {
-      return ['Failed to load ${response.statusCode}'];
+      print('Failed to load ${response.statusCode}');
     }
   }
 }

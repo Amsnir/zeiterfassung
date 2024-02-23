@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/zeitspeicher.dart';
+import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
+
+import 'package:hive_flutter/hive_flutter.dart'; // Make sure to import Hive
 
 class BuchenPage extends StatefulWidget {
   final Dienstnehmer dienstnehmer;
@@ -16,24 +20,42 @@ class BuchenPage extends StatefulWidget {
 class _BuchenPageState extends State<BuchenPage> {
   late String _timeString;
   bool _showSuccessMessage = false;
-  List<String> bookingOptions = []; // Dropdown menu items
-  String? _selectedBookingOption; // Selected item from the dropdown
+  // Assuming Zeitspeicher objects are being used, replacing List<String> with List<Zeitspeicher>
+  List<Zeitspeicher> bookingOptions = []; // Holds Zeitspeicher objects
+  Zeitspeicher? _selectedBookingOption; // Holds the selected name as a String
 
   @override
   void initState() {
     super.initState();
     _timeString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
-    _fetchZeitdatenOptions();
+
+    // Fetch zeitdaten and store it in Hive
+    _fetchAndStoreZeitdaten();
   }
 
-  void _fetchZeitdatenOptions() async {
-    var options = await ApiHandler.fetchZeitdaten(widget.dienstnehmer);
+  void _fetchAndStoreZeitdaten() async {
+    await ApiHandler.fetchZeitdaten(widget.dienstnehmer);
+    // Assuming fetchZeitdaten stores the fetched data in Hive
+
+    _loadDataFromHive(); // Load the stored data into the widget state
+  }
+
+  void _loadDataFromHive() async {
+    var box = await HiveFactory.openBox<Zeitspeicher>('zeitspeicher');
+    List<Zeitspeicher> zeitdaten = box.values.toList();
+
     setState(() {
-      bookingOptions = options; // Update your dropdown options list
-      _selectedBookingOption =
-          options.first; // Initialize with the first option
+      bookingOptions = zeitdaten;
+      if (bookingOptions.isNotEmpty) {
+        _selectedBookingOption = bookingOptions.first;
+      } else {
+        _selectedBookingOption = null;
+      }
     });
+
+    await box.close();
+    print("Loaded ${bookingOptions.length} booking options from Hive.");
   }
 
   void _getTime() {
@@ -48,25 +70,28 @@ class _BuchenPageState extends State<BuchenPage> {
   }
 
   void _attemptBooking() {
-    var bookingFuture = ApiHandler.buchen(
-      dienstnehmer: widget.dienstnehmer,
-      buchungsdatum: DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
-    );
-
-    setState(() {});
-//Buchung erfolgfreich wird nur für 5 Sekunden angezeigt
-    bookingFuture.then((wasSuccessful) {
-      if (wasSuccessful) {
-        setState(() {
-          _showSuccessMessage = true;
-        });
-        Future.delayed(const Duration(seconds: 5), () {
+    if (_selectedBookingOption != null) {
+      var bookingFuture = ApiHandler.buchen(
+        dienstnehmer: widget.dienstnehmer,
+        buchungsdatum:
+            DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
+        zeitdatenId: _selectedBookingOption!.nummer,
+      );
+      bookingFuture.then((wasSuccessful) {
+        if (wasSuccessful) {
           setState(() {
-            _showSuccessMessage = false;
+            _showSuccessMessage = true;
           });
-        });
-      }
-    });
+          Future.delayed(const Duration(seconds: 5), () {
+            setState(() {
+              _showSuccessMessage = false;
+            });
+          });
+        }
+      });
+    } else {
+      print("sex on tghe beach");
+    }
   }
 
   @override
@@ -77,7 +102,7 @@ class _BuchenPageState extends State<BuchenPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 50),
-            Image.asset('lib/images/LHR.png'),
+            Image.asset('lib/images/LHR.png'), // Placeholder for your image
             Text(
               _timeString,
               style: const TextStyle(
@@ -94,23 +119,21 @@ class _BuchenPageState extends State<BuchenPage> {
                       Colors.grey[200], // Adjust the color to match the button
                   borderRadius: BorderRadius.circular(20), // Rounded corners
                 ),
-                child: DropdownButton<String>(
+                child: DropdownButton<Zeitspeicher>(
                   value: _selectedBookingOption,
-                  icon: const Icon(Icons.arrow_downward,
-                      color: Colors.grey), // Adjust the icon color
+                  icon: const Icon(Icons.arrow_downward, color: Colors.grey),
                   elevation: 16,
-                  style: const TextStyle(
-                      color: Colors.black), // Adjust the text color
-                  onChanged: (String? newValue) {
+                  style: const TextStyle(color: Colors.black),
+                  onChanged: (Zeitspeicher? newValue) {
                     setState(() {
                       _selectedBookingOption = newValue;
                     });
                   },
-                  items: bookingOptions
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
+                  items: bookingOptions.map<DropdownMenuItem<Zeitspeicher>>(
+                      (Zeitspeicher value) {
+                    return DropdownMenuItem<Zeitspeicher>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value.name),
                     );
                   }).toList(),
                 ),
@@ -130,10 +153,9 @@ class _BuchenPageState extends State<BuchenPage> {
                   child: Text(
                     "B U C H E N",
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16),
                   ),
                 ),
               ),
@@ -143,10 +165,9 @@ class _BuchenPageState extends State<BuchenPage> {
               const Text("Buchung erfolgreich",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  )),
+                      fontSize: 20.0,
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold)),
           ],
         ),
       ),
