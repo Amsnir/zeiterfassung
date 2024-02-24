@@ -80,7 +80,7 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
   @override
   Widget build(BuildContext context) {
     return dienstnehmerstammList.isEmpty
-        ? CircularProgressIndicator()
+        ? const CircularProgressIndicator()
         : _buildButtons(context);
   }
 }
