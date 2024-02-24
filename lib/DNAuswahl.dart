@@ -52,7 +52,7 @@ Widget build(BuildContext context) {
       : Column(
          mainAxisAlignment: MainAxisAlignment.center, // Main content of the page
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 40),
             if (_offlineModus)
               const Text("Offline Mode",
                   textAlign: TextAlign.center,
@@ -60,7 +60,7 @@ Widget build(BuildContext context) {
                       fontSize: 20.0,
                       color: Colors.red,
                       fontWeight: FontWeight.bold)),
-            const SizedBox(height: 75),
+            const SizedBox(height: 30),
             Image.asset('lib/images/LHR.png'), // Make sure your asset path is correct
             Expanded(
               child: Padding(

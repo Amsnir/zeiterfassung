@@ -246,7 +246,7 @@ return false;
 }
 
 
-
+//------------------ SEND OFFLINE BUCHUNG-----------------
 
 Future<void> sendOfflineBuchungenToServer() async {
   Box<Buchungen> box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
@@ -279,3 +279,4 @@ print("Buchung geschickt!");
 
   await HiveFactory.closeBox(box);
 }
+

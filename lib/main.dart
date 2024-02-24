@@ -5,45 +5,53 @@ import 'package:zeiterfassung_v1/login/pages/login_page.dart';
 import 'package:zeiterfassung_v1/DNAuswahl.dart';
 
 void main() async {
-  await HiveFactory.initHive();
-  await HiveFactory.registerAdapter();
-  WidgetsFlutterBinding.ensureInitialized();
-  //synchData();
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure plugins are initialized
+  await HiveFactory.initHive(); // Initialize Hive
+  await HiveFactory.registerAdapter(); // Register Hive adapters
 
   runApp(const MainApp());
-
-  // After runApp, check connectivity and process offline bookings
-  processOfflineBuchungenIfNeeded();
 }
 
-Future<void> processOfflineBuchungenIfNeeded() async {
-  // Check for connectivity
+Future<bool> processOfflineBuchungenIfNeeded() async {
   bool isConnected = await ApiHandler.checkConnectivity();
   if (isConnected) {
-    await sendOfflineBuchungenToServer();
+    await sendOfflineBuchungenToServer(); 
+    return true; // Indicates that processing occurred
   }
+  return false; // Indicates no processing was needed or occurred
 }
+
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: FutureBuilder<bool>(
-        future: ApiHandler.checkConnectivity(), // Your checkConnectivity method
+        future: ApiHandler.checkConnectivity(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            // If the future is complete and data is available, use it to decide the initial route
+            // Navigate based on connectivity
             if (snapshot.data == true) {
-              // If checkConnectivity returns true, navigate to LoginPage
-              return const LoginPage();
+              // If there's connectivity, navigate to LoginPage and then process offline bookings
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
+                // After navigating, check and process offline bookings
+                processOfflineBuchungenIfNeeded().then((processed) {
+                  // If you need to notify the user, do it here
+                  // e.g., using a method on LoginPage or global state management
+                });
+              });
             } else {
-              // If checkConnectivity returns false, navigate to DNAuswahlPage
-              return DNAuswahlPage(); // Make sure this is the correct name and it's imported
+              // No connectivity, go straight to DNAuswahlPage
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DNAuswahlPage()));
+              });
             }
+            return Container(); // Placeholder widget until navigation completes
           } else {
-            // While waiting for the future to complete, show a loading indicator
+            // While waiting, show a loading indicator
             return const Center(child: CircularProgressIndicator());
           }
         },
