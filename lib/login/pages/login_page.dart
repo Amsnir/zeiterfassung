@@ -86,53 +86,60 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 75),
-                  Image.asset(
-                      'lib/images/LHR.png'), // Ensure your image path is correct
-                  const SizedBox(height: 10),
-                  MyTextField(
-                    controller: serverController,
-                    hintText: 'http://XXX.XXX.X.X:XXX',
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 40),
-                  MyTextField(
-                    controller: usernameController,
-                    hintText: 'Username',
-                    obscureText: false,
-                  ),
-                  const SizedBox(height: 40),
-                  MyTextField(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
-                  ),
-                  CheckboxListTile(
-                    title: const Text("Anmeldedaten merken"),
-                    value: _saveLoginInfo,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _saveLoginInfo = value ?? false;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity
-                        .leading, // Position the checkbox at the start of the tile
-                  ),
-                  const SizedBox(height: 25),
-                  MyButton(
-                    onTap:
-                        signUserIn,
-                  ),
-                ],
-              ),
+Widget build(BuildContext context) {
+  // Determine if the device is in landscape mode
+  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
+  return Scaffold(
+    body: _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 75),
+                Image.asset(
+                  'lib/images/LHR.png',
+                  // Adjust width based on the orientation
+                  width: isLandscape ? MediaQuery.of(context).size.width * 0.5 : MediaQuery.of(context).size.width * 0.8,
+                  // Optionally adjust the height as well
+                  // height: isLandscape ? 100 : 200, 
+                  fit: BoxFit.cover,
+                ),
+                const SizedBox(height: 10),
+                MyTextField(
+                  controller: serverController,
+                  hintText: 'http://XXX.XXX.X.X:XXX',
+                  obscureText: false,
+                ),
+                const SizedBox(height: 40),
+                MyTextField(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obscureText: false,
+                ),
+                const SizedBox(height: 40),
+                MyTextField(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                ),
+                CheckboxListTile(
+                  title: const Text("Anmeldedaten merken"),
+                  value: _saveLoginInfo,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _saveLoginInfo = value ?? false;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading, // Position the checkbox at the start of the tile
+                ),
+                const SizedBox(height: 25),
+                MyButton(
+                  onTap: signUserIn,
+                ),
+              ],
             ),
-    );
-  }
+          ),
+  );
+}
 }
