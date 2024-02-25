@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:zeiterfassung_v1/buchen/buchen_page.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 
 class DynamicButtonsWidget extends StatefulWidget {
+  const DynamicButtonsWidget({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _DynamicButtonsWidgetState createState() => _DynamicButtonsWidgetState();
 }
 
@@ -35,7 +37,7 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
   Widget _buildButtons(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
+    return SizedBox(
       height: 300,
       child: ListView.builder(
         itemCount: dienstnehmerstammList.length,

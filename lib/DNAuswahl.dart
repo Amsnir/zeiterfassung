@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:zeiterfassung_v1/dynamicbuttonswidget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
-import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
-// Ensure you import your ApiHandler here
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
 
 class DNAuswahlPage extends StatefulWidget {
   const DNAuswahlPage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<DNAuswahlPage> {
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   bool _offlineModus = false;
   bool _isLoading = true;
 
@@ -51,7 +48,7 @@ Widget build(BuildContext context) {
 
   return Scaffold(
     body: _isLoading
-        ? Center(child: CircularProgressIndicator()) // Show loading indicator when data is loading
+        ? const Center(child: CircularProgressIndicator()) // Show loading indicator when data is loading
         : SingleChildScrollView( // Make the entire body scrollable
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center, // Main content of the page

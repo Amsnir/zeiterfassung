@@ -16,6 +16,7 @@ class BuchenPage extends StatefulWidget {
   BuchenPage({Key? key, required this.dienstnehmer}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _BuchenPageState createState() => _BuchenPageState();
 }
 
@@ -213,7 +214,7 @@ Widget build(BuildContext context) {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (_offlineModus)
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text("Offline Mode",
                               textAlign: TextAlign.center,
@@ -244,7 +245,7 @@ Widget build(BuildContext context) {
                             },
                           ),
                           const Text(
-                            'Buchungsende',
+                            'Zeitende',
                             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -289,7 +290,7 @@ Widget build(BuildContext context) {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
+                            backgroundColor: Colors.transparent,
                             padding: EdgeInsets.zero,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -315,9 +316,9 @@ Widget build(BuildContext context) {
                         ),
                       ),
                       if (_showSuccessMessage)
-                        Text("Buchung erfolgreich", style: TextStyle(fontSize: 20.0, color: Colors.green, fontWeight: FontWeight.bold)),
+                        const Text("Buchung erfolgreich", style: TextStyle(fontSize: 20.0, color: Colors.green, fontWeight: FontWeight.bold)),
                       if (_showofflineMessage)
-                        Text("Buchung lokal gespeichert. Keine Internetverbindung",
+                        const Text("Buchung lokal gespeichert. Keine Internetverbindung",
                             textAlign: TextAlign.center, style: TextStyle(fontSize: 20.0, color: Colors.orange, fontWeight: FontWeight.bold)),
                     ],
                   ),
