@@ -12,13 +12,14 @@ void main() async {
   runApp(const MainApp());
 }
 
-Future<bool> processOfflineBuchungenIfNeeded() async {
+Future<int> processOfflineBuchungenIfNeeded() async {
   bool isConnected = await ApiHandler.checkConnectivity();
   if (isConnected) {
-    await sendOfflineBuchungenToServer(); 
-    return true; // Indicates that processing occurred
+    // Access the method via the singleton instance of ApiHandler
+    int processedCount = await ApiHandler().sendOfflineBuchungenToServer(); 
+    return processedCount;
   }
-  return false; // Indicates no processing was needed or occurred
+  return 0;
 }
 
 class MainApp extends StatelessWidget {
@@ -26,6 +27,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    precacheImage(AssetImage("lib/images/LHR.png"), context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: FutureBuilder<bool>(
@@ -35,14 +39,13 @@ class MainApp extends StatelessWidget {
             // Navigate based on connectivity
             if (snapshot.data == true) {
               // If there's connectivity, navigate to LoginPage and then process offline bookings
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
-                // After navigating, check and process offline bookings
-                processOfflineBuchungenIfNeeded().then((processed) {
-                  // If you need to notify the user, do it here
-                  // e.g., using a method on LoginPage or global state management
-                });
-              });
+           WidgetsBinding.instance.addPostFrameCallback((_) {
+  processOfflineBuchungenIfNeeded().then((processedCount) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => LoginPage(initialProcessedBookingsCount: processedCount),
+    ));
+  });
+});
             } else {
               // No connectivity, go straight to DNAuswahlPage
               WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -241,13 +241,14 @@ catch(e){
 return false;
 }
 }
-}
+
 
 
 //------------------ SEND OFFLINE BUCHUNG-----------------
 
-Future<void> sendOfflineBuchungenToServer() async {
+ Future<int> sendOfflineBuchungenToServer() async {
   Box<Buchungen> box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
+  int successCount = 0;
 
   List<Buchungen> buchungen = box.values.toList();
 
@@ -270,11 +271,15 @@ print("Soviele Offline Buchungen ${buchungen.length}");
   );
 print("Buchung geschickt!");
     if (wasSuccessful) {
+            successCount++;
       // If the booking was successfully sent, remove it from the box
-      await buchung.delete(); // This removes the booking from the Hive box
+      await buchung.delete();
     }
-  }
+
 
   await HiveFactory.closeBox(box);
 }
+ return successCount;
+}
 
+}

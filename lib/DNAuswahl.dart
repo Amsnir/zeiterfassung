@@ -8,10 +8,12 @@ class DNAuswahlPage extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
+  
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<DNAuswahlPage> {
+  
   final storage = const FlutterSecureStorage();
   bool _offlineModus = false;
   bool _isLoading = true;
@@ -22,6 +24,8 @@ class _HomePageState extends State<DNAuswahlPage> {
     super.initState();
     fetchData();
   }
+
+  
 
   Future<void> fetchData() async {
     String? cookie = await storage.read(key: 'cookie');
@@ -70,13 +74,13 @@ Widget build(BuildContext context) {
                   // height: isLandscape ? 100 : 200, // Example fixed height adjustment
                   fit: BoxFit.cover, // This can help with adjusting the aspect ratio
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 20.0),
-                      const Text(
+                      SizedBox(height: 20.0),
+                      Text(
                         'DIENSTNEHMERAUSWAHL',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -85,7 +89,7 @@ Widget build(BuildContext context) {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 20.0),
+                      SizedBox(height: 20.0),
                       DynamicButtonsWidget(), // Adjust according to how DynamicButtonsWidget is implemented
                     ],
                   ),

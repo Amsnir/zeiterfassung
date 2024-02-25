@@ -6,7 +6,10 @@ import 'package:zeiterfassung_v1/login/components/my_textfield.dart';
 import 'package:zeiterfassung_v1/DnAuswahl.dart'; // Adjust the import path as necessary
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final int initialProcessedBookingsCount;
+
+  const LoginPage({Key? key, this.initialProcessedBookingsCount = 0})
+      : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -16,15 +19,18 @@ class _LoginPageState extends State<LoginPage> {
   final serverController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+    int _processedBuchungenCount = 0;
   bool _isLoading = false;
   final storage = const FlutterSecureStorage(); // Secure storage instance
   bool _saveLoginInfo = false; // Checkbox state
 
-  @override
-  void initState() {
-    super.initState();
-    loadCredentials();
-  }
+@override
+void initState() {
+  super.initState();
+  _processedBuchungenCount = widget.initialProcessedBookingsCount;
+  loadCredentials();
+}
+  
 
   Future<void> loadCredentials() async {
     final serverUrl = await storage.read(key: 'serverUrl');
@@ -44,6 +50,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+void notifyUserOfProcessedBuchungen(int count) {
+  setState(() {
+    _processedBuchungenCount = count;
+  });
+}
   Future<void> signUserIn() async {
     setState(() {
       _isLoading = true;
@@ -90,19 +101,24 @@ Widget build(BuildContext context) {
   // Determine if the device is in landscape mode
   bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
-  return Scaffold(
+return Scaffold(
     body: _isLoading
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
             child: Column(
               children: [
+                if (_processedBuchungenCount > 0) // Display only if there are processed bookings
+                  Padding( 
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('$_processedBuchungenCount ausstehende Buchung(en) wurde(n) versendet',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 20.0, color: Colors.orange, fontWeight: FontWeight.bold)),
+                  ),
+                  
                 const SizedBox(height: 75),
                 Image.asset(
                   'lib/images/LHR.png',
-                  // Adjust width based on the orientation
                   width: isLandscape ? MediaQuery.of(context).size.width * 0.5 : MediaQuery.of(context).size.width * 0.8,
-                  // Optionally adjust the height as well
-                  // height: isLandscape ? 100 : 200, 
                   fit: BoxFit.cover,
                 ),
                 const SizedBox(height: 10),
@@ -131,7 +147,7 @@ Widget build(BuildContext context) {
                       _saveLoginInfo = value ?? false;
                     });
                   },
-                  controlAffinity: ListTileControlAffinity.leading, // Position the checkbox at the start of the tile
+                  controlAffinity: ListTileControlAffinity.leading,
                 ),
                 const SizedBox(height: 25),
                 MyButton(
@@ -140,6 +156,6 @@ Widget build(BuildContext context) {
               ],
             ),
           ),
-  );
+);
 }
 }
