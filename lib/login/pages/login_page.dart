@@ -66,11 +66,18 @@ class _LoginPageState extends State<LoginPage> {
           actions: <Widget>[
             TextButton(
               child: Text('Verwerfen'),
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.black),
+              ),
               onPressed: () =>
                   Navigator.of(context).pop(false), // Return false on cancel
             ),
             TextButton(
               child: Text('Senden'),
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor: MaterialStateProperty.all(Color(0xFF443B5A)),
+              ),
               onPressed: () =>
                   Navigator.of(context).pop(true), // Return true on send
             ),
