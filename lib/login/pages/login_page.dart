@@ -180,7 +180,8 @@ class _LoginPageState extends State<LoginPage> {
                     width: isLandscape
                         ? MediaQuery.of(context).size.width * 0.5
                         : MediaQuery.of(context).size.width * 0.8,
-                    fit: BoxFit.cover,
+                    height: isLandscape ? 320 : 200,
+                    fit: BoxFit.contain, // Changed to BoxFit.contain
                   ),
                   const SizedBox(height: 10),
                   MyTextField(

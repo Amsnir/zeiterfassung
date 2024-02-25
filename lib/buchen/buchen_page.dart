@@ -41,9 +41,6 @@ class _BuchenPageState extends State<BuchenPage> {
     _fetchAndStoreZeitdaten();
   }
 
-
-  
-
   @override
   void dispose() {
     _timer?.cancel(); // Cancel the timer
@@ -105,49 +102,54 @@ class _BuchenPageState extends State<BuchenPage> {
 //---------------------Buchen versuchen oder in offline Einfügen -------------------------
 
   Future<void> _attemptBooking() async {
-  // Check connectivity first
-  if (await ApiHandler.checkConnectivity() == true) {
-    int nummerToSend;
-    if (zeitende) {
-      // If the checkbox is checked, set the special value
-      nummerToSend = -2;
-    } else {
-      // If the checkbox is not checked, use the selected booking option's number
-      // Make sure to handle the case where _selectedBookingOption might be null
-      nummerToSend = _selectedBookingOption?.nummer ?? -1; // Use a default or handle error
-    }
-
-    // Proceed with booking using nummerToSend
-    var bookingFuture = ApiHandler.buchen(
-      dienstnehmer: widget.dienstnehmer,
-      buchungsdatum: DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
-      zeitdatenId: nummerToSend,
-    );
-
-    bookingFuture.then((wasSuccessful) {
-      if (wasSuccessful) {
-        setState(() {
-          _showSuccessMessage = true;
-        });
-        Future.delayed(const Duration(seconds: 5), () {
-          setState(() {
-            _showSuccessMessage = false;
-          });
-        });
+    // Check connectivity first
+    if (await ApiHandler.checkConnectivity() == true) {
+      int nummerToSend;
+      if (zeitende) {
+        // If the checkbox is checked, set the special value
+        nummerToSend = -2;
+      } else {
+        // If the checkbox is not checked, use the selected booking option's number
+        // Make sure to handle the case where _selectedBookingOption might be null
+        nummerToSend = _selectedBookingOption?.nummer ??
+            -1; // Use a default or handle error
       }
-    });
-  } else if (await ApiHandler.checkConnectivity() == false) {
-    // If offline, handle offline saving similarly using nummerToSend
-    saveOfflineBuchung(
-      faKz: widget.dienstnehmer.faKz,
-      faNr: widget.dienstnehmer.faNr,
-      dnNr: widget.dienstnehmer.dnNr,
-      nummer: zeitende ? -2 : _selectedBookingOption?.nummer ?? -1, // Use special value or selected option
-      timestamp: DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
-    );
-    print("Buchen nicht erfolgreich - offline mode");
+
+      // Proceed with booking using nummerToSend
+      var bookingFuture = ApiHandler.buchen(
+        dienstnehmer: widget.dienstnehmer,
+        buchungsdatum:
+            DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
+        zeitdatenId: nummerToSend,
+      );
+
+      bookingFuture.then((wasSuccessful) {
+        if (wasSuccessful) {
+          setState(() {
+            _showSuccessMessage = true;
+          });
+          Future.delayed(const Duration(seconds: 5), () {
+            setState(() {
+              _showSuccessMessage = false;
+            });
+          });
+        }
+      });
+    } else if (await ApiHandler.checkConnectivity() == false) {
+      // If offline, handle offline saving similarly using nummerToSend
+      saveOfflineBuchung(
+        faKz: widget.dienstnehmer.faKz,
+        faNr: widget.dienstnehmer.faNr,
+        dnNr: widget.dienstnehmer.dnNr,
+        nummer: zeitende
+            ? -2
+            : _selectedBookingOption?.nummer ??
+                -1, // Use special value or selected option
+        timestamp: DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
+      );
+      print("Buchen nicht erfolgreich - offline mode");
+    }
   }
-}
 //----------------- Saving Buchung into offline Database ------------------------
 
   Future<void> saveOfflineBuchung({
@@ -185,150 +187,183 @@ class _BuchenPageState extends State<BuchenPage> {
 //------------------------ UI DESIGN ----------------------------
 
   @override
-Widget build(BuildContext context) {
-  // Determine if the device is in landscape mode
-  bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  Widget build(BuildContext context) {
+    // Determine if the device is in landscape mode
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
-  return Scaffold(
-    body: SafeArea(
-      child: SingleChildScrollView( // Make the entire body scrollable
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Back Button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, size: 24.0),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => DNAuswahlPage(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (_offlineModus)
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Offline Mode",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0, color: Colors.red, fontWeight: FontWeight.bold)),
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // Make the entire body scrollable
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Back Button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, size: 24.0),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => DNAuswahlPage(),
                         ),
-                      Image.asset(
-                        'lib/images/LHR.png',
-                        width: isLandscape ? MediaQuery.of(context).size.width * 0.5 : MediaQuery.of(context).size.width * 0.8,
-                        height: isLandscape ? 320 : 200,
-                        fit: BoxFit.cover,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Text(
-                          _timeString,
-                          style: const TextStyle(fontSize: 50.0, color: Color(0xFF443B5A), fontWeight: FontWeight.bold),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (_offlineModus)
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text("Offline Mode",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        Image.asset(
+                          'lib/images/LHR.png',
+                          width: isLandscape
+                              ? MediaQuery.of(context).size.width * 0.5
+                              : MediaQuery.of(context).size.width * 0.8,
+                          height: isLandscape ? 320 : 200,
+                          fit: BoxFit.contain, // Changed to BoxFit.contain
                         ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Checkbox(
-                            value: zeitende,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                zeitende = value!;
-                              });
-                            },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            _timeString,
+                            style: const TextStyle(
+                                fontSize: 50.0,
+                                color: Color(0xFF443B5A),
+                                fontWeight: FontWeight.bold),
                           ),
-                          const Text(
-                            'Zeitende',
-                            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      if (!zeitende)
-                        DropdownButtonHideUnderline(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: DropdownButton<Zeitspeicher>(
-                              value: _selectedBookingOption,
-                              icon: const Icon(Icons.arrow_downward, color: Colors.grey),
-                              elevation: 16,
-                              style: const TextStyle(color: Colors.black),
-                              onChanged: (Zeitspeicher? newValue) {
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Checkbox(
+                              value: zeitende,
+                              onChanged: (bool? value) {
                                 setState(() {
-                                  _selectedBookingOption = newValue;
+                                  zeitende = value!;
                                 });
                               },
-                              items: bookingOptions.map<DropdownMenuItem<Zeitspeicher>>((Zeitspeicher value) {
-                                return DropdownMenuItem<Zeitspeicher>(
-                                  value: value,
-                                  child: Text(value.name),
-                                );
-                              }).toList(),
                             ),
-                          ),
+                            const Text(
+                              'Zeitende',
+                              style: TextStyle(
+                                  fontSize: 18.0, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 75),
-                        child: ElevatedButton(
-                          onPressed: _isBookingInProgress ? null : () async {
-                            setState(() {
-                              _isBookingInProgress = true;
-                            });
-                            await _attemptBooking();
-                            setState(() {
-                              _isBookingInProgress = false;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              color: _isBookingInProgress ? Colors.grey : const Color.fromRGBO(28, 53, 80, 1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                        if (!zeitende)
+                          DropdownButtonHideUnderline(
                             child: Container(
-                              padding: const EdgeInsets.all(15),
-                              alignment: Alignment.center,
-                              child: _isBookingInProgress
-                                  ? const CircularProgressIndicator(color: Colors.white)
-                                  : const Text(
-                                      "B U C H E N",
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                                    ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: DropdownButton<Zeitspeicher>(
+                                value: _selectedBookingOption,
+                                icon: const Icon(Icons.arrow_downward,
+                                    color: Colors.grey),
+                                elevation: 16,
+                                style: const TextStyle(color: Colors.black),
+                                onChanged: (Zeitspeicher? newValue) {
+                                  setState(() {
+                                    _selectedBookingOption = newValue;
+                                  });
+                                },
+                                items: bookingOptions
+                                    .map<DropdownMenuItem<Zeitspeicher>>(
+                                        (Zeitspeicher value) {
+                                  return DropdownMenuItem<Zeitspeicher>(
+                                    value: value,
+                                    child: Text(value.name),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 75),
+                          child: ElevatedButton(
+                            onPressed: _isBookingInProgress
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      _isBookingInProgress = true;
+                                    });
+                                    await _attemptBooking();
+                                    setState(() {
+                                      _isBookingInProgress = false;
+                                    });
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                color: _isBookingInProgress
+                                    ? Colors.grey
+                                    : const Color.fromRGBO(28, 53, 80, 1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(15),
+                                alignment: Alignment.center,
+                                child: _isBookingInProgress
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white)
+                                    : const Text(
+                                        "B U C H E N",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (_showSuccessMessage)
-                        const Text("Buchung erfolgreich", style: TextStyle(fontSize: 20.0, color: Colors.green, fontWeight: FontWeight.bold)),
-                      if (_showofflineMessage)
-                        const Text("Buchung lokal gespeichert. Keine Internetverbindung",
-                            textAlign: TextAlign.center, style: TextStyle(fontSize: 20.0, color: Colors.orange, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-          ],
+                        if (_showSuccessMessage)
+                          const Text("Buchung erfolgreich",
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold)),
+                        if (_showofflineMessage)
+                          const Text(
+                              "Buchung lokal gespeichert. Keine Internetverbindung",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+            ],
+          ),
         ),
       ),
-      ),
-  );
-}
+    );
+  }
 }
