@@ -216,83 +216,71 @@ class ApiHandler {
     }
   }
 
-
 //----------------------CHECK CONNECTIVITY----------------------------
 
-static Future <bool> checkConnectivity() async {
+  static Future<bool> checkConnectivity() async {
+    String url = "https://app.lohn.at/Self/api/v1";
 
-  String url =
-        "https://app.lohn.at/Self/api/v1";
-
-  try {
-     final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 404) {
-    print("Connection to internet established");
-          return true;
-     }
-     else{
-      print("No Connection, Offline Modus ${response.statusCode}" );
-      return false;
-     }
- 
-  }
-catch(e){
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 404) {
+        print("Connection to internet established");
+        return true;
+      } else {
+        print("No Connection, Offline Modus ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
       print("Check Connectivity: Exception occurred: $e");
-return false;
-}
-}
-
-
+      return false;
+    }
+  }
 
 //------------------ SEND OFFLINE BUCHUNG-----------------
 
- Future<int> sendOfflineBuchungenToServer() async {
-  Box<Buchungen> box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
-  int successCount = 0;
+  Future<int> sendOfflineBuchungenToServer() async {
+    Box<Buchungen> box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
+    int successCount = 0;
 
-  List<Buchungen> buchungen = box.values.toList();
+    List<Buchungen> buchungen = box.values.toList();
 
-print("Soviele Offline Buchungen ${buchungen.length}");
+    print("Soviele Offline Buchungen ${buchungen.length}");
 
-  for (Buchungen buchung in buchungen) {
-  // Create a Dienstnehmer object from the Buchungen data
-  Dienstnehmer dienstnehmer = Dienstnehmer(
-    faKz: buchung.faKz,
-    faNr: buchung.faNr,
-    dnNr: buchung.dnNr,
-  );
+    for (Buchungen buchung in buchungen) {
+      // Create a Dienstnehmer object from the Buchungen data
+      Dienstnehmer dienstnehmer = Dienstnehmer(
+        faKz: buchung.faKz,
+        faNr: buchung.faNr,
+        dnNr: buchung.dnNr,
+      );
 
-  // Implement the logic to send booking to the server
-  bool wasSuccessful = await ApiHandler.buchen(
-    dienstnehmer: dienstnehmer,
-    buchungsdatum: buchung.timestamp,
-    zeitdatenId: buchung.nummer,
-    // Include other necessary parameters
-  );
-print("Buchung geschickt!");
-    if (wasSuccessful) {
-            successCount++;
-      // If the booking was successfully sent, remove it from the box
-      await buchung.delete();
+      // Implement the logic to send booking to the server
+      bool wasSuccessful = await ApiHandler.buchen(
+        dienstnehmer: dienstnehmer,
+        buchungsdatum: buchung.timestamp,
+        zeitdatenId: buchung.nummer,
+        // Include other necessary parameters
+      );
+      print("Buchung geschickt!");
+      if (wasSuccessful) {
+        successCount++;
+        // If the booking was successfully sent, remove it from the box
+        await buchung.delete();
+      }
     }
+    await HiveFactory.closeBox(box);
+    return successCount;
+  }
 
-
-  await HiveFactory.closeBox(box);
-}
- return successCount;
-}
-
-
- static Future<int> countOfflineBookings() async {
+  static Future<int> countOfflineBookings() async {
     try {
       final box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
       int count = box.values.length;
-      await HiveFactory.closeBox(box); 
+      await HiveFactory.closeBox(box);
       return count;
     } catch (e) {
       print("Error counting offline bookings: $e");
       return 0;
     }
   }
-
 }
