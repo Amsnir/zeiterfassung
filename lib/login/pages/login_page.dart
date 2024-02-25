@@ -150,11 +150,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     // Determine if the device is in landscape mode
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
       body: _isLoading
@@ -162,26 +161,29 @@ class _LoginPageState extends State<LoginPage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  if (_processedBuchungenCount >
-                      0) // Display only if there are processed bookings
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          '$_processedBuchungenCount ausstehende Buchung(en) versendet',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 75), // Existing spacing
+                  if (_processedBuchungenCount > 0) // Check for processed bookings
+                    Column(
+                      children: [
+                        const SizedBox(height: 15), // Additional spacing above the text
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '$_processedBuchungenCount ausstehende Buchung(en) versendet',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
-                  const SizedBox(height: 75),
                   Image.asset(
                     'lib/images/LHR.png',
-                    width: isLandscape
-                        ? MediaQuery.of(context).size.width * 0.5
-                        : MediaQuery.of(context).size.width * 0.8,
+                    width: isLandscape ? MediaQuery.of(context).size.width * 0.5 : MediaQuery.of(context).size.width * 0.8,
                     height: isLandscape ? 320 : 200,
-                    fit: BoxFit.contain, // Changed to BoxFit.contain
+                    fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 10),
                   MyTextField(
