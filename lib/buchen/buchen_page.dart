@@ -178,6 +178,8 @@ class _BuchenPageState extends State<BuchenPage> {
     Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         _showSuccessMessage = false;
+              _showofflineMessage = false;
+
       });
     });
 
