@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive/hive.dart';
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
 import 'package:zeiterfassung_v1/login/components/my_button.dart';
 import 'package:zeiterfassung_v1/login/components/my_textfield.dart';
 import 'package:zeiterfassung_v1/DnAuswahl.dart'; // Adjust the import path as necessary
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/offlinebuchung.dart';
+import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   final int initialProcessedBookingsCount;
@@ -27,8 +32,13 @@ class _LoginPageState extends State<LoginPage> {
 @override
 void initState() {
   super.initState();
-  _processedBuchungenCount = widget.initialProcessedBookingsCount;
   loadCredentials();
+  if (widget.initialProcessedBookingsCount > 0) {
+    // Wait for the widget to build before showing the dialog
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      promptUserForOfflineBuchungen(widget.initialProcessedBookingsCount);
+    });
+  }
 }
   
 
@@ -49,6 +59,44 @@ void initState() {
       });
     }
   }
+
+Future<void> promptUserForOfflineBuchungen(int count) async {
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Offline Buchungen'),
+        content: Text('Sie haben $count ausstehende Buchungen. Möchten Sie diese jetzt senden?'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Verwerfen'),
+            onPressed: () => Navigator.of(context).pop(false), // Return false on cancel
+          ),
+          TextButton(
+            child: Text('Senden'),
+            onPressed: () => Navigator.of(context).pop(true), // Return true on send
+          ),
+        ],
+      );
+    },
+  );
+
+  // Act based on the dialog result
+  if (result == true) {
+    // User chooses to send the bookings
+    int processedCount = await ApiHandler().sendOfflineBuchungenToServer();
+    notifyUserOfProcessedBuchungen(processedCount);
+  } else {
+    // User chooses not to send the bookings
+    deleteAllOfflineBuchungen();
+  }
+}
+
+Future<void> deleteAllOfflineBuchungen() async {
+  Box<Buchungen> box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
+  await box.clear(); // This deletes all entries in the box
+  // Optionally, notify the user that the bookings have been deleted
+}
 
 void notifyUserOfProcessedBuchungen(int count) {
   setState(() {
@@ -110,7 +158,7 @@ return Scaffold(
                 if (_processedBuchungenCount > 0) // Display only if there are processed bookings
                   Padding( 
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('$_processedBuchungenCount ausstehende Buchung(en) wurde(n) versendet',
+                    child: Text('$_processedBuchungenCount ausstehende Buchung(en) versendet',
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 20.0, color: Colors.orange, fontWeight: FontWeight.bold)),
                   ),

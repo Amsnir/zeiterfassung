@@ -12,12 +12,12 @@ void main() async {
   runApp(const MainApp());
 }
 
-Future<int> processOfflineBuchungenIfNeeded() async {
+Future<int> countOfflineBuchungen() async {
   bool isConnected = await ApiHandler.checkConnectivity();
   if (isConnected) {
-    // Access the method via the singleton instance of ApiHandler
-    int processedCount = await ApiHandler().sendOfflineBuchungenToServer(); 
-    return processedCount;
+    // Pretend we check and found X offline bookings; adjust with actual logic
+    int offlineCount = await ApiHandler.countOfflineBookings();// obtain count from your storage;
+    return offlineCount;
   }
   return 0;
 }
@@ -39,14 +39,14 @@ class MainApp extends StatelessWidget {
             // Navigate based on connectivity
             if (snapshot.data == true) {
               // If there's connectivity, navigate to LoginPage and then process offline bookings
-           WidgetsBinding.instance.addPostFrameCallback((_) {
-  processOfflineBuchungenIfNeeded().then((processedCount) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+  countOfflineBuchungen().then((count) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => LoginPage(initialProcessedBookingsCount: processedCount),
+      builder: (context) => LoginPage(initialProcessedBookingsCount: count),
     ));
   });
 });
-            } else {
+     } else {
               // No connectivity, go straight to DNAuswahlPage
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DNAuswahlPage()));

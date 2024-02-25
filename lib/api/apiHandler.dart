@@ -282,4 +282,17 @@ print("Buchung geschickt!");
  return successCount;
 }
 
+
+ static Future<int> countOfflineBookings() async {
+    try {
+      final box = await HiveFactory.openBox<Buchungen>('offlinebuchung');
+      int count = box.values.length;
+      await HiveFactory.closeBox(box); 
+      return count;
+    } catch (e) {
+      print("Error counting offline bookings: $e");
+      return 0;
+    }
+  }
+
 }
