@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zeiterfassung_v1/DNAuswahl.dart';
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
+import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmerstammtest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/dienstnehmertest.dart';
 import 'package:zeiterfassung_v1/hivedb/hivedb_test/zeitspeicher.dart';
 import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
@@ -12,8 +13,11 @@ import 'package:hive_flutter/hive_flutter.dart'; // Make sure to import Hive
 
 class BuchenPage extends StatefulWidget {
   final Dienstnehmer dienstnehmer;
+  final Dienstnehmerstamm dienstnehmerstamm;
 
-  BuchenPage({Key? key, required this.dienstnehmer}) : super(key: key);
+  BuchenPage(
+      {Key? key, required this.dienstnehmer, required this.dienstnehmerstamm})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -109,8 +113,7 @@ class _BuchenPageState extends State<BuchenPage> {
         // If the checkbox is checked, set the special value
         nummerToSend = -2;
       } else {
-        // If the checkbox is not checked, use the selected booking option's number
-        // Make sure to handle the case where _selectedBookingOption might be null
+        // If the checkbox is not checked, use the selected Buchen option's number
         nummerToSend = _selectedBookingOption?.nummer ??
             -1; // Use a default or handle error
       }
@@ -178,8 +181,7 @@ class _BuchenPageState extends State<BuchenPage> {
     Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         _showSuccessMessage = false;
-              _showofflineMessage = false;
-
+        _showofflineMessage = false;
       });
     });
 
@@ -206,11 +208,11 @@ class _BuchenPageState extends State<BuchenPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.arrow_back, size: 24.0),
+                    icon: const Icon(Icons.arrow_back, size: 24.0),
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (context) => DNAuswahlPage(),
+                          builder: (context) => const DNAuswahlPage(),
                         ),
                       );
                     },
@@ -218,7 +220,7 @@ class _BuchenPageState extends State<BuchenPage> {
                 ],
               ),
               _isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -239,6 +241,22 @@ class _BuchenPageState extends State<BuchenPage> {
                               : MediaQuery.of(context).size.width * 0.8,
                           height: isLandscape ? 320 : 200,
                           fit: BoxFit.contain, // Changed to BoxFit.contain
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20,
+                              left: 20,
+                              right:
+                                  20), // Add some padding around the text for better spacing
+                          child: Text(
+                            "${widget.dienstnehmerstamm.nachname} ${widget.dienstnehmerstamm.name}", // Use the name of the dienstnehmer here
+                            textAlign: TextAlign.center, // Center the text
+                            style: TextStyle(
+                              fontSize: 20.0, // Set the font size
+                              color: Colors.grey, // Set the text color to grey
+                              // You can adjust the font weight if needed, e.g., fontWeight: FontWeight.bold
+                            ),
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),
