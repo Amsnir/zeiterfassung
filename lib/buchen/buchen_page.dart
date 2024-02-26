@@ -199,7 +199,6 @@ class _BuchenPageState extends State<BuchenPage> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          // Make the entire body scrollable
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -317,6 +316,7 @@ class _BuchenPageState extends State<BuchenPage> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 50),
                         Container(
                           margin: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 75),

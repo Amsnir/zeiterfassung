@@ -38,7 +38,8 @@ class MainApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             // Navigate based on connectivity
             if (snapshot.data == true) {
-              // If there's connectivity, navigate to LoginPage and then process offline bookings
+
+              // If there's connectivity, navigate to LoginPage and then process offline Buchung
   WidgetsBinding.instance.addPostFrameCallback((_) {
   countOfflineBuchungen().then((count) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
