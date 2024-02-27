@@ -55,8 +55,10 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => BuchenPage(
-                        dienstnehmer:
-                            dienstnehmerList[index]), // Adjust this line
+                      dienstnehmer: dienstnehmerList[index],
+                      dienstnehmerstamm: dienstnehmerstammList[
+                          index], // Pass the additional required field here
+                    ),
                   ),
                 );
               },
