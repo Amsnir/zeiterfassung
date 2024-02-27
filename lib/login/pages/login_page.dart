@@ -162,8 +162,9 @@ class _LoginPageState extends State<LoginPage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
+                   const SizedBox(height: 75),
                   if (_processedBuchungenCount >
-                      0) // Display only if there are processed bookings
+                      0)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(

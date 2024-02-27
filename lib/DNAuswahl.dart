@@ -56,7 +56,7 @@ class _HomePageState extends State<DNAuswahlPage> {
                 mainAxisAlignment:
                     MainAxisAlignment.center, // Main content of the page
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 50),
                   if (_offlineModus)
                     const Text("Offline Mode",
                         textAlign: TextAlign.center,
