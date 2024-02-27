@@ -161,20 +161,6 @@ class _LoginPageState extends State<LoginPage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-<<<<<<< HEAD
-                   const SizedBox(height: 75),
-                  if (_processedBuchungenCount >
-                      0)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                          '$_processedBuchungenCount ausstehende Buchung(en) versendet',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold)),
-=======
                   const SizedBox(height: 75), // Existing spacing
                   if (_processedBuchungenCount > 0) // Check for processed bookings
                     Column(
@@ -192,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ],
->>>>>>> 2b640664f2d75f50abcafa60d5a6574b74406033
                     ),
                   Image.asset(
                     'lib/images/LHR.png',
