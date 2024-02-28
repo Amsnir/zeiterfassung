@@ -145,7 +145,7 @@ class ApiHandler {
       {required Dienstnehmer dienstnehmer,
       required String buchungsdatum,
       required int zeitdatenId}) async {
-    print(zeitdatenId);
+    print("Buchungsnummer: $zeitdatenId");
     String apiUrl =
         "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum";
     try {
@@ -254,7 +254,7 @@ class ApiHandler {
         dnNr: buchung.dnNr,
       );
 
-      // Implement the logic to send booking to the server
+      // Implement the logic to send Buchung to the server
       bool wasSuccessful = await ApiHandler.buchen(
         dienstnehmer: dienstnehmer,
         buchungsdatum: buchung.timestamp,
@@ -264,7 +264,7 @@ class ApiHandler {
       print("Buchung geschickt!");
       if (wasSuccessful) {
         successCount++;
-        // If the booking was successfully sent, remove it from the box
+        // If the Buchung was successfully sent, remove it from the box
         await buchung.delete();
       }
     }

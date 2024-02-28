@@ -144,10 +144,7 @@ class _BuchenPageState extends State<BuchenPage> {
         faKz: widget.dienstnehmer.faKz,
         faNr: widget.dienstnehmer.faNr,
         dnNr: widget.dienstnehmer.dnNr,
-        nummer: zeitende
-            ? -2
-            : _selectedBookingOption?.nummer ??
-                -1, // Use special value or selected option
+        nummer: zeitende ? -2 : _selectedBookingOption?.nummer ?? -1,
         timestamp: DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now()),
       );
       print("Buchen nicht erfolgreich - offline mode");
@@ -202,7 +199,6 @@ class _BuchenPageState extends State<BuchenPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Back Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -239,21 +235,17 @@ class _BuchenPageState extends State<BuchenPage> {
                               ? MediaQuery.of(context).size.width * 0.5
                               : MediaQuery.of(context).size.width * 0.8,
                           height: isLandscape ? 320 : 200,
-                          fit: BoxFit.contain, // Changed to BoxFit.contain
+                          fit: BoxFit.contain,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 20,
-                              left: 20,
-                              right:
-                                  20), // Add some padding around the text for better spacing
+                              top: 20, left: 20, right: 20),
                           child: Text(
-                            "${widget.dienstnehmerstamm.nachname} ${widget.dienstnehmerstamm.name}", // Use the name of the dienstnehmer here
-                            textAlign: TextAlign.center, // Center the text
-                            style: TextStyle(
-                              fontSize: 20.0, // Set the font size
-                              color: Colors.grey, // Set the text color to grey
-                              // You can adjust the font weight if needed, e.g., fontWeight: FontWeight.bold
+                            "${widget.dienstnehmerstamm.nachname} ${widget.dienstnehmerstamm.name}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              color: Colors.grey,
                             ),
                           ),
                         ),
@@ -316,7 +308,7 @@ class _BuchenPageState extends State<BuchenPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 50),
+                        const SizedBox(height: 50),
                         Container(
                           margin: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 75),
