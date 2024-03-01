@@ -15,7 +15,6 @@ void main() async {
 Future<int> countOfflineBuchungen() async {
   bool isConnected = await ApiHandler.checkConnectivity();
   if (isConnected) {
-    // Pretend we check and found X offline bookings; adjust with actual logic
     int offlineCount = await ApiHandler
         .countOfflineBookings(); // obtain count from your storage;
     return offlineCount;

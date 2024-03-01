@@ -364,7 +364,7 @@ class _BuchenPageState extends State<BuchenPage> {
                                   fontWeight: FontWeight.bold)),
                         if (_showofflineMessage)
                           const Text(
-                              "Buchung lokal gespeichert. Keine Internetverbindung",
+                              "Buchung lokal gespeichert. Keine Verbindung zum Server",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 20.0,

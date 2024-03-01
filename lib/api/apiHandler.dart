@@ -31,6 +31,7 @@ class ApiHandler {
       if (response.statusCode == 200) {
         final cookieHeader = response.headers['set-cookie'];
         if (cookieHeader != null) {
+          print(cookieHeader);
           // Split the cookie string into individual cookies
           final cookies = cookieHeader
               .split(',')
@@ -145,9 +146,15 @@ class ApiHandler {
       {required Dienstnehmer dienstnehmer,
       required String buchungsdatum,
       required int zeitdatenId}) async {
+    String apiUrl;
     print("Buchungsnummer: $zeitdatenId");
-    String apiUrl =
-        "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum";
+    if (zeitdatenId == -2) {
+      apiUrl =
+          "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum&zeitende=true";
+    } else {
+      apiUrl =
+          "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum&zeitspeicher=$zeitdatenId";
+    }
     try {
       final storage = FlutterSecureStorage();
       String? cookie = await storage.read(key: 'cookie');
