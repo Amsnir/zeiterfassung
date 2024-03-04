@@ -239,6 +239,10 @@ class ApiHandler {
     if (storageurl == null) {
       return true;
     }
+    if (_instance._serverUrl.isEmpty) {
+      _instance.setServerUrl(storageurl);
+    }
+
     String url = "${_instance._serverUrl}/Self/api/v1";
     print(url);
     try {

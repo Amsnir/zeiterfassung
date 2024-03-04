@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zeiterfassung_v1/dynamicbuttonswidget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
+import 'package:zeiterfassung_v1/login/pages/login_page.dart';
 
 class DNAuswahlPage extends StatefulWidget {
   const DNAuswahlPage({Key? key}) : super(key: key);
@@ -46,56 +47,71 @@ class _HomePageState extends State<DNAuswahlPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      body: _isLoading
-          ? const Center(
-              child:
-                  CircularProgressIndicator()) // Show loading indicator when data is loading
-          : SingleChildScrollView(
-              // Make the entire body scrollable
-              child: Column(
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Main content of the page
-                children: [
-                  const SizedBox(height: 50),
-                  if (_offlineModus)
-                    const Text("Offline Mode",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 30),
-                  Image.asset(
-                    'lib/images/LHR.png',
-                    width: isLandscape
-                        ? MediaQuery.of(context).size.width * 0.5
-                        : MediaQuery.of(context).size.width * 0.8,
-                    height: isLandscape ? 320 : 200,
-                    fit: BoxFit.contain, // Changed to BoxFit.contain
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: 20.0),
-                        Text(
-                          'DIENSTNEHMERAUSWAHL',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height: 50),
+                        if (_offlineModus)
+                          const Text("Offline Mode",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 30),
+                        Image.asset(
+                          'lib/images/LHR.png',
+                          width: isLandscape
+                              ? MediaQuery.of(context).size.width * 0.5
+                              : MediaQuery.of(context).size.width * 0.8,
+                          height: isLandscape ? 320 : 200,
+                          fit: BoxFit.contain,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 20.0),
+                              Text(
+                                'DIENSTNEHMERAUSWAHL',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 20.0),
+                              DynamicButtonsWidget(),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 20.0),
-                        DynamicButtonsWidget(), // Adjust according to how DynamicButtonsWidget is implemented
                       ],
                     ),
                   ),
-                ],
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const LoginPage(),
+                    ));
+                  },
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
