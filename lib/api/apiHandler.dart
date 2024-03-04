@@ -12,6 +12,7 @@ import 'package:zeiterfassung_v1/hivedb/hivefactory.dart';
 
 class ApiHandler {
   static final ApiHandler _instance = ApiHandler._();
+  String _serverUrl = '';
 
   factory ApiHandler() {
     return _instance;
@@ -19,12 +20,19 @@ class ApiHandler {
 
   ApiHandler._();
 
+// Method to set serverUrl
+  void setServerUrl(String url) {
+    _serverUrl = url;
+  }
+
 //-----------------------GET COOKIE---------------------------------
 
   static Future<bool> getCookie(
       String serverUrl, String username, String password) async {
+    _instance
+        .setServerUrl(serverUrl); // Set the serverUrl when getting the cookie
     final url = Uri.parse(
-        '$serverUrl/Self/api/v1/login?username=$username&password=$password');
+        '${_instance._serverUrl}/Self/api/v1/login?username=$username&password=$password');
     try {
       final response = await http.post(url);
 
@@ -90,7 +98,7 @@ class ApiHandler {
 //----------------------------GET DIENSTNEHMER-----------------------------
 
   static Future<void> fetchDienstnehmerData(String cookie) async {
-    final url = Uri.parse("https://app.lohn.at/Self/api/v1/dienstnehmer");
+    final url = Uri.parse("${_instance._serverUrl}/Self/api/v1/dienstnehmer");
     try {
       final response = await http.get(url, headers: {'Cookie': cookie});
 
@@ -150,10 +158,10 @@ class ApiHandler {
     print("Buchungsnummer: $zeitdatenId");
     if (zeitdatenId == -2) {
       apiUrl =
-          "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum&zeitende=true";
+          "${_instance._serverUrl}/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum&zeitende=true";
     } else {
       apiUrl =
-          "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum&zeitspeicher=$zeitdatenId";
+          "${_instance._serverUrl}/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/buchen?buchungsdatum=$buchungsdatum&zeitspeicher=$zeitdatenId";
     }
     try {
       final storage = FlutterSecureStorage();
@@ -182,7 +190,7 @@ class ApiHandler {
 
   static Future<void> fetchZeitdaten(Dienstnehmer dienstnehmer) async {
     String url =
-        "https://app.lohn.at/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/zeitdaten";
+        "${_instance._serverUrl}/Self/api/v1/zeit/firmengruppen/${dienstnehmer.faKz}/firmen/${dienstnehmer.faNr}/dienstnehmer/${dienstnehmer.dnNr}/zeitdaten";
 
     final storage = FlutterSecureStorage();
     String? cookie = await storage.read(key: 'cookie');
@@ -226,8 +234,13 @@ class ApiHandler {
 //----------------------CHECK CONNECTIVITY----------------------------
 
   static Future<bool> checkConnectivity() async {
-    String url = "https://app.lohn.at/Self/api/v1";
-
+    final storage = FlutterSecureStorage();
+    String? storageurl = await storage.read(key: 'serverUrl');
+    if (storageurl == null) {
+      return true;
+    }
+    String url = "${_instance._serverUrl}/Self/api/v1";
+    print(url);
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 404) {
