@@ -243,11 +243,24 @@ class _BuchenPageState extends State<BuchenPage> {
                             Padding(
                               padding: const EdgeInsets.only(
                                   top: 20, left: 20, right: 20),
-                              child: Text(
-                                "${widget.dienstnehmerstamm.nachname} ${widget.dienstnehmerstamm.name}",
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 20.0, color: Colors.grey),
+                              child: Row(
+                                mainAxisSize: MainAxisSize
+                                    .min, // Minimize the row size to wrap its content
+                                mainAxisAlignment: MainAxisAlignment
+                                    .center, // Center the row content
+                                children: [
+                                  Icon(Icons.account_circle,
+                                      color: Colors
+                                          .grey), // The icon next to the text
+                                  SizedBox(
+                                      width: 10), // Space between icon and text
+                                  Text(
+                                    "${widget.dienstnehmerstamm.nachname} ${widget.dienstnehmerstamm.name}",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        fontSize: 20.0, color: Colors.grey),
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(

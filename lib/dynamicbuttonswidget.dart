@@ -8,7 +8,6 @@ class DynamicButtonsWidget extends StatefulWidget {
   const DynamicButtonsWidget({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DynamicButtonsWidgetState createState() => _DynamicButtonsWidgetState();
 }
 
@@ -51,13 +50,11 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
             margin: const EdgeInsets.only(bottom: 10),
             child: ElevatedButton(
               onPressed: () {
-                // Assuming dienstnehmerList[index] contains the corresponding Dienstnehmer data
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => BuchenPage(
                       dienstnehmer: dienstnehmerList[index],
-                      dienstnehmerstamm: dienstnehmerstammList[
-                          index], // Pass the additional required field here
+                      dienstnehmerstamm: dienstnehmerstammList[index],
                     ),
                   ),
                 );
@@ -69,10 +66,29 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
                 backgroundColor: Colors.grey,
                 minimumSize:
                     Size(screenWidth - 40, 50), // Adjust based on your design
+                padding: EdgeInsets.zero, // Remove default padding
               ),
-              child: Text(
-                buttonLabel,
-                style: const TextStyle(fontSize: 20.0, color: Colors.white),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .start, // Align children to the start of the Row
+                children: [
+                  Padding(
+                    // Padding around the icon
+                    padding: const EdgeInsets.only(
+                        left: 10), // Only add padding to the left side
+                    child: Icon(Icons.account_circle, color: Colors.white),
+                  ),
+                  SizedBox(width: 10), // Space between icon and text
+                  Expanded(
+                    // Use Expanded to fill the available space
+                    child: Text(
+                      buttonLabel,
+                      style:
+                          const TextStyle(fontSize: 20.0, color: Colors.white),
+                      textAlign: TextAlign.left, // Align text to the left
+                    ),
+                  ),
+                ],
               ),
             ),
           );
