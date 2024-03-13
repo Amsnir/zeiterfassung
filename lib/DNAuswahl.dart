@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zeiterfassung_v1/dynamicbuttonswidget.dart';
+import 'package:zeiterfassung_v1/DN_Button.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zeiterfassung_v1/api/apiHandler.dart';
 import 'package:zeiterfassung_v1/login/pages/login_page.dart';

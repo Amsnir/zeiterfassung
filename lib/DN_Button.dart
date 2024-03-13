@@ -72,13 +72,13 @@ class _DynamicButtonsWidgetState extends State<DynamicButtonsWidget> {
                 mainAxisAlignment: MainAxisAlignment
                     .start, // Align children to the start of the Row
                 children: [
-                  Padding(
+                  const Padding(
                     // Padding around the icon
-                    padding: const EdgeInsets.only(
+                    padding: EdgeInsets.only(
                         left: 10), // Only add padding to the left side
                     child: Icon(Icons.account_circle, color: Colors.white),
                   ),
-                  SizedBox(width: 10), // Space between icon and text
+                  const SizedBox(width: 10), // Space between icon and text
                   Expanded(
                     // Use Expanded to fill the available space
                     child: Text(
